@@ -62,17 +62,23 @@ sequenceDiagram
     participant API as service-cp-crime-results-nows
     participant DB as Postgres store
 
-    Sub->>API: GET .../hearings/{hearingId}/defendants/{masterDefendantId}/now-events
-    API->>DB: read persisted record(s)
+    Sub->>API: GET /cases/{caseURN}/hearings/{hearingId}/defendants/{defendantId}
+    API->>DB: resolve defendantId → masterDefendantId
+    DB-->>API: masterDefendantId
+    API->>DB: read record(s) for (hearingId, masterDefendantId)
     DB-->>API: record(s) or none
     API-->>Sub: 200 with eligible NOW event type(s)
 ```
 
-Endpoint path above is illustrative — the OpenAPI contract in `api-cp-crime-results-nows` is not
-yet authored.
+The subscriber addresses a resource by `caseURN`/`defendantId` — the identifiers they already
+hold — never by `masterDefendantId`, which is this service's own internal merge key (ADR-002).
+Resolving one to the other is this service's job, not the caller's. Endpoint path above is
+illustrative — the OpenAPI contract in `api-cp-crime-results-nows` is not yet authored.
 
 ## 4. Open items
 
 - Empty-result response shape (200 with empty array vs. 404) — not yet decided.
 - Retry durations/max-tries for this service's own failure mode (ADR-001) — not yet sized.
 - Store schema for the `(hearingId, masterDefendantId, eventType)` key — not yet migrated.
+- `defendantId → masterDefendantId` resolution mechanism — likely a mapping persisted at
+  ingestion time (the merge is already computed there), but not yet decided as its own schema.
