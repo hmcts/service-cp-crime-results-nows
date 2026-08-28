@@ -139,13 +139,13 @@ reason: a REST call landing before the viewstore catches up is not proven to fai
 than return an incomplete result — this needs confirming against the Results team's actual
 behaviour before retry logic is finalised (§13).
 
-### 4c. Why a dedicated Service Bus queue, not a direct Event Grid webhook
+### 4c. Why a dedicated Service Bus queue, not a direct Event Grid subscription on this service
 
-Settled in ADR-001: Event Grid is push-only with no pull-subscription model; a direct webhook
+Settled in ADR-001: Event Grid is push-only with no pull-subscription model; receiving it directly
 would require this service to implement Event Grid's subscription-validation handshake and own a
-public HTTPS endpoint. Routing through a Terraform-provisioned Service Bus queue instead needs zero
-Event Grid-specific code in this service — native `maxDeliveryCount`/dead-lettering replace
-hand-rolled retry, and competing-consumer semantics give scale-out for free.
+public HTTPS endpoint of its own. Routing through a Terraform-provisioned Service Bus queue instead
+needs zero Event Grid-specific code in this service — native `maxDeliveryCount`/dead-lettering
+replace hand-rolled retry, and competing-consumer semantics give scale-out for free.
 
 ---
 
