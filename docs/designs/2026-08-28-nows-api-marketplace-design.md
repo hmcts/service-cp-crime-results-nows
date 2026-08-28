@@ -11,7 +11,7 @@ needs.
 ```mermaid
 flowchart LR
     EG["Event Grid<br/>Hearing_Resulted"] --> Q["Service Bus queue<br/>nows.hearing-resulted"]
-    Q --> C["Consumer<br/>(peek-lock)"]
+    Q --> C["service-cp-crime-results-nows<br/>(peek-lock consumer)"]
     C --> HD["Hearing detail resolution<br/>(cache-then-fallback + completeness retry)"]
     HD --> VG["Vocabulary computation<br/>per masterDefendantId"]
     VG --> ND["NOW-definition match<br/>allow-list → requirement tree"]
@@ -29,7 +29,7 @@ flowchart LR
 sequenceDiagram
     participant EG as Event Grid
     participant Q as Queue (nows.hearing-resulted)
-    participant C as Consumer
+    participant C as service-cp-crime-results-nows
     participant HD as Hearing detail source
     participant RD as Reference data<br/>(NOW-definitions, subscriptions)
     participant DB as Postgres store
