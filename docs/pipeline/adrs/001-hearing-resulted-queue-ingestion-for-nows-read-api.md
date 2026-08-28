@@ -27,22 +27,19 @@ start if the queue is unreachable — no in-process fallback for a missing infra
 receipt, this service resolves the full hearing detail, persists NOW document metadata, and
 serves reads from that store directly.
 
-Hearing-detail resolution needs a completeness retry with backoff, since the event and the
-query-side view it depends on are updated by different processes and can race. The exact
-resolution strategy is a follow-up implementation detail.
-
-## Options considered
-
-| Option | Pros | Cons |
-|---|---|---|
-| **Service Bus queue (chosen)** | Decouples from producer availability; native redelivery/dead-lettering | Needs a queue provisioned and something upstream to route events onto it |
-| Synchronous webhook | No queue to provision | This service owns inbound auth and the producer's retry policy |
-| Live proxy reads (no store) | No store/pipeline to build | Read availability tied to upstream uptime; no history |
+Hearing-detail resolution needs a completeness retry, since the event and the query-side view it
+depends on are updated by different processes and can race. Retry is queue-level, not in-process:
+on an incomplete result the consumer completes the message and schedules a follow-up
+(`ScheduledEnqueueTimeUtc`), the same pattern `service-cp-crime-results-pcr` settled on
+(ADR-009) once its own queue-based ingestion went live — a dedicated retry-durations component
+plus a retry-computation component, clamped to the last configured delay once attempts exceed the
+list. This service's own retry durations/max-tries are a follow-up implementation detail; the
+pattern itself is not.
 
 ## Consequences
 
 - Needs its own Postgres schema/migrations and a Service Bus consumer — new build-out.
-- Dead-letter/redelivery backoff strategy for the consumer is a follow-up design item.
+- Retry durations/max-tries for this service's own failure mode are a follow-up design item.
 - `Hearing_Resulted` is published onto `nows.hearing-resulted` via Event Grid.
 - Persisting a meaningful record depends on a generation-gate decision (which NOW variant
   applies) — needs its own design.
