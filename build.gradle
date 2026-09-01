@@ -49,4 +49,15 @@ dependencies {
   // Security: pin transitive tomcat-embed-core to patched version (CVE-2026-41293, -43512, et al.)
   // Brought in transitively via spring-boot-starter-web; >=11.0.0-M1,<11.0.22 are vulnerable
   implementation 'org.apache.tomcat.embed:tomcat-embed-core:11.0.25'
+
+  // --- Hearing-detail resolution: Redis-first, REST fallback (ADR-001) ---
+  implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+  implementation 'org.owasp.encoder:encoder:1.4.0'
+
+  // --- Service Bus consumer (ADR-001) — same versions as service-cp-crime-results-pcr ---
+  implementation 'com.azure:azure-messaging-servicebus:7.17.20'
+  implementation 'com.azure:azure-identity:1.18.5'
+  implementation 'org.awaitility:awaitility:4.3.0'
+
+  testImplementation 'org.wiremock:wiremock-standalone:3.13.2'
 }
