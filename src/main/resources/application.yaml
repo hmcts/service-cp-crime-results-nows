@@ -1,6 +1,13 @@
 spring:
   application:
-    name: service-UPDATE-TO-BE-NAME-OF-SERVICE
+    name: service-cp-crime-results-nows
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      ssl:
+        enabled: ${REDIS_SSL_ENABLED:false}
 
 server:
   port: ${SERVER_PORT:8082}
@@ -19,7 +26,21 @@ management:
     health:
       probes:
         enabled: true   # enables liveness / readiness groups
+  health:
+    redis:
+      enabled: false
 
 logging:
   level:
     root: INFO
+
+results-query-client:
+  url: ${CP_BACKEND_URL:http://localhost:8081}
+  cjscppuid: ${CJSCPPUID:00000000-0000-0000-0000-000000000000}
+
+service-bus:
+  admin-connection: ${AZURE_SERVICE_BUS_ADMIN_URI:Endpoint=sb://localhost:5300;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=SAS_KEY_VALUE;UseDevelopmentEmulator=true;}
+  connection: ${AZURE_SERVICE_BUS_URI:Endpoint=sb://localhost;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=SAS_KEY_VALUE;UseDevelopmentEmulator=true;}
+  auto-start-processors: ${SERVICE_BUS_AUTO_START_PROCESSORS:false}
+  ingestion-enabled: ${SERVICE_BUS_INGESTION_ENABLED:false}
+  retry-durations: ${SERVICE_BUS_RETRY_DURATIONS:2s,4s}
