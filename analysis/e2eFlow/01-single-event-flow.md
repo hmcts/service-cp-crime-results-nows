@@ -278,7 +278,7 @@ list to check) → the candidate survives → **eligible**.
 | `now_hearing` | `hearing_id = 6988027f-e786-49f4-a00f-7c35ab459464`, `hearing_day = 2026-09-02` |
 | `now_defendant` | `master_defendant_id = d2151771-…` |
 | `now_defendant_case` | `case_urn = RC363968376`, `defendant_id = d2151771-…` |
-| `now_defendant_snapshot` | `content` = the full resolved defendant/hearing/offences JSON (§6b below, minus the `eligibleEventTypes` wrapper) |
+| `now_defendant_snapshot` | `content` = the full resolved defendant/hearing/offences JSON (§6b below, minus the `eventTypes` wrapper) |
 | `now_eligible_event` | `event_type = WEE_CustodialSentence`, `matched_result_type_ids = ["3f8e2a10-…"]`, `matched_at = 2026-09-02T18:05:00Z` |
 
 ---
@@ -294,7 +294,7 @@ GET /hearings/6988027f-e786-49f4-a00f-7c35ab459464
   {
     "caseURN": "RC363968376",
     "defendantId": "d2151771-41a1-42e1-af36-a99d9b39c0b2",
-    "eligibleEventTypes": [
+    "eventTypes": [
       { "eventType": "WEE_CustodialSentence", "matchedAt": "2026-09-02T18:05:00Z" }
     ]
   }
@@ -339,7 +339,7 @@ GET /cases/RC363968376/hearings/6988027f-e786-49f4-a00f-7c35ab459464/defendants/
     "hearingDate": "2026-09-02",
     "jurisdiction": "MAGISTRATES"
   },
-  "eligibleEventTypes": [
+  "eventTypes": [
     {
       "eventType": "WEE_CustodialSentence",
       "orderName": "Warrant for Custodial Sentence",

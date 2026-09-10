@@ -52,7 +52,7 @@ All example values below are synthetic/placeholder — no real case, defendant, 
     "hearingDate": "2026-09-02",
     "jurisdiction": "MAGISTRATES"
   },
-  "eligibleEventTypes": [
+  "eventTypes": [
     {
       "eventType": "WEE_CustodialSentence",
       "orderName": "Warrant for Custodial Sentence",
@@ -137,7 +137,7 @@ New/changed fields marked `// NEW`. Confidence tier noted per addition — see �
     "jurisdiction": "MAGISTRATES",
     "courtApplications": []
   },
-  "eligibleEventTypes": [
+  "eventTypes": [
     {
       "eventType": "WEE_CustodialSentence",
       "orderName": "Warrant for Custodial Sentence",
@@ -192,8 +192,8 @@ worked scenario above, which has none):**
 | Field | Current | Enhanced | Confidence |
 |---|---|---|---|
 | `hearing.courtDetails.ljaCode` | absent | **added** | Tier 1 — confirmed on the wire (`results-shared-v3` event fixture, LJA code sits right next to LJA name on the same object) |
-| `eligibleEventTypes[].nowText[]` | absent | **added** | Tier 1 — same `nows-metadata` response already fetched for requirement-tree matching |
-| `eligibleEventTypes[].nowRequirementText[]` | absent | **added** | Tier 1 — same source as above |
+| `eventTypes[].nowText[]` | absent | **added** | Tier 1 — same `nows-metadata` response already fetched for requirement-tree matching |
+| `eventTypes[].nowRequirementText[]` | absent | **added** | Tier 1 — same source as above |
 | `defendant.pncId` | absent | **added** | Tier 2 — confirmed in upstream domain; `hearingDetails/internal` contract itself not verified |
 | `defendant.contact.{home,mobile}` | absent | **added** | Tier 2 |
 | `defendant.nationalInsuranceNumber` | absent | **added** | Tier 2 |

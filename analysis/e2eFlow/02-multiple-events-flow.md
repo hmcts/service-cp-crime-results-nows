@@ -327,7 +327,7 @@ candidate is dropped**. Effects, traced all the way through:
 | `now_defendant_snapshot.content` | both results present | **unchanged** — still holds both results |
 | `now_eligible_event` rows | 2 | **1** — no `NEE_FootballBanning` row is ever written |
 | Stage 6a thin list | 2 entries | **1 entry** |
-| Stage 6b rich response | 2 entries in `eligibleEventTypes[]` | **1 entry** — the football banning result exists in the snapshot but is never surfaced by either endpoint |
+| Stage 6b rich response | 2 entries in `eventTypes[]` | **1 entry** — the football banning result exists in the snapshot but is never surfaced by either endpoint |
 
 Two things worth taking from that trace:
 
@@ -375,7 +375,7 @@ GET /hearings/6988027f-e786-49f4-a00f-7c35ab459464
   {
     "caseURN": "RC363968376",
     "defendantId": "d2151771-41a1-42e1-af36-a99d9b39c0b2",
-    "eligibleEventTypes": [
+    "eventTypes": [
       { "eventType": "WEE_CustodialSentence", "matchedAt": "2026-09-02T18:05:00Z" },
       { "eventType": "NEE_FootballBanning", "matchedAt": "2026-09-02T18:05:00Z" }
     ]
@@ -420,7 +420,7 @@ GET /cases/RC363968376/hearings/6988027f-e786-49f4-a00f-7c35ab459464/defendants/
     "hearingDate": "2026-09-02",
     "jurisdiction": "MAGISTRATES"
   },
-  "eligibleEventTypes": [
+  "eventTypes": [
     {
       "eventType": "WEE_CustodialSentence",
       "orderName": "Warrant for Custodial Sentence",

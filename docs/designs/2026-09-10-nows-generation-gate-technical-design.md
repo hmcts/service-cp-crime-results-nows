@@ -474,7 +474,7 @@ Response — built from `now_defendant_snapshot.content` (§5b), with each eligi
     "hearingDate": "2026-09-02",
     "jurisdiction": "MAGISTRATES"
   },
-  "eligibleEventTypes": [
+  "eventTypes": [
     {
       "eventType": "WEE_CustodialSentence",
       "orderName": "Warrant for Custodial Sentence",
@@ -531,7 +531,7 @@ which stays a purely internal merge key (ADR-002) and must never appear in a req
   {
     "caseURN": "OG231065167",
     "defendantId": "86fc543b-4090-43f3-bd6d-8c1522844c99",
-    "eligibleEventTypes": [
+    "eventTypes": [
       { "eventType": "WEE_CustodialSentence", "matchedAt": "2026-09-10T09:12:03Z" }
     ]
   }
@@ -563,7 +563,7 @@ alongside this one.
 | `defendantId` | Required only on the per-defendant endpoint | path | Same reasoning as `caseURN` — the two are a pair, never supplied alone. |
 | `masterDefendantId` | **Never** accepted, on either endpoint | — | Internal merge key only (ADR-002); exposing it as a request or response field would leak an implementation detail a subscriber has no way to independently obtain anyway. |
 | `hearingDay` | **Never** accepted at the API boundary | — | An ingestion-time correlation input (from the `Hearing_Resulted` event's own `data.hearingDay`, used only for the Redis cache key at ingestion) — not something a read-side subscriber holds or should need to supply. |
-| `eventType` (filter) | Optional, both endpoints | query | On the hearing-list endpoint (§6b), lets a subscriber interested in one document type narrow the response without post-filtering client-side. On the per-defendant endpoint (§6a), narrows `eligibleEventTypes[]` down to one entry — now worth having there too, since that payload carries full content per matched event type rather than the small eligibility-only record it used to be. |
+| `eventType` (filter) | Optional, both endpoints | query | On the hearing-list endpoint (§6b), lets a subscriber interested in one document type narrow the response without post-filtering client-side. On the per-defendant endpoint (§6a), narrows `eventTypes[]` down to one entry — now worth having there too, since that payload carries full content per matched event type rather than the small eligibility-only record it used to be. |
 | `caseURN` (filter) | Optional, hearing-list endpoint only | query | Lets a subscriber narrow a multi-case hearing to one case without switching to the per-defendant endpoint (which still needs `defendantId` too). |
 | Pagination (`page`/`size`) | Not recommended for now | — | A hearing typically has one defendant, occasionally a handful in a joint trial — no evidence of hearings with enough defendants to need paging. Flagged as an open item if that assumption turns out wrong (§9). |
 | `asOf` / version param | Not applicable in this phase | — | No version history exists yet (§4/HLD §7) — one live record per `(hearingId, masterDefendantId, eventType)`. Revisit if/when reshare/amendment handling (HLD §12) is designed. |
