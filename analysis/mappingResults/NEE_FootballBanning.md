@@ -1,0 +1,52 @@
+# NEE FootballBanning
+
+- **Template ID:** `NEE_FootballBanning`
+- **Source file:** `analysis/templates/NEE_FootballBanningTemplate.docx`
+- **Type:** Notice
+- **Delivery:** Email
+- **Language:** English
+- **Code:** `NEE`
+- **Field count:** 38
+
+## Merge fields
+
+| Field | Category | Source kind | Hearing-results source | API Response available | API Response note |
+|---|---|---|---|---|---|
+| `additionalRequirements` | prompt (value) | Judicial result prompt | judicialResultPrompts[promptReference ≈ "additionalRequirements"].value / .label (matched case-insensitively) | Partial | no stable promptReference key exists here — would have to fuzzy-match offences[].results[].resultTexts[].label against a hardcoded display string for "additionalRequirements", then read .value |
+| `amendmentdate` | date field | Hearing-resulted event | derived: the matched judicial result's amendmentDate | No | no amendment concept in this schema |
+| `defendant.address.line1` | field | Hearing-resulted event | personDefendant.personDetails.address.address{1-5}/postcode | Yes | defendant.address.address{1-5} / .postCode |
+| `defendant.address.line2` | optional field | Hearing-resulted event | personDefendant.personDetails.address.address{1-5}/postcode | Yes | defendant.address.address{1-5} / .postCode |
+| `defendant.address.line3` | optional field | Hearing-resulted event | personDefendant.personDetails.address.address{1-5}/postcode | Yes | defendant.address.address{1-5} / .postCode |
+| `defendant.address.line4` | optional field | Hearing-resulted event | personDefendant.personDetails.address.address{1-5}/postcode | Yes | defendant.address.address{1-5} / .postCode |
+| `defendant.address.line5` | optional field | Hearing-resulted event | personDefendant.personDetails.address.address{1-5}/postcode | Yes | defendant.address.address{1-5} / .postCode |
+| `defendant.address.postCode` | field | Hearing-resulted event | personDefendant.personDetails.address.address{1-5}/postcode | Yes | defendant.address.address{1-5} / .postCode |
+| `defendant.dateOfBirth` | date field | Hearing-resulted event | personDefendant.personDetails.dateOfBirth | Yes | defendant.dateOfBirth |
+| `defendant.name` | field | Hearing-resulted event | personDefendant.personDetails.firstName + lastName (or legalEntityDefendant.organisation.name) | Yes | defendant.title + firstName + middleName + lastName |
+| `durationOfOrder` | prompt (value) | Judicial result prompt | judicialResultPrompts[promptReference ≈ "durationOfOrder"].value / .label (matched case-insensitively) | Partial | no stable promptReference key exists here — would have to fuzzy-match offences[].results[].resultTexts[].label against a hardcoded display string for "durationOfOrder", then read .value |
+| `nt.value(‘additionalRequirementsText’)` | helper:nt | NOW definition catalogue | NOW definition catalogue's static nowTextList / nowRequirementText — not from the hearing-resulted event (though it can interpolate a prompt value inline) | No | NOW catalogue static text — outside any hearing/case API's scope |
+| `nt.value(‘at’)` | helper:nt | NOW definition catalogue | NOW definition catalogue's static nowTextList / nowRequirementText — not from the hearing-resulted event (though it can interpolate a prompt value inline) | No | NOW catalogue static text — outside any hearing/case API's scope |
+| `nt.value(‘beingHeldInCustodyAt’)` | helper:nt | NOW definition catalogue | NOW definition catalogue's static nowTextList / nowRequirementText — not from the hearing-resulted event (though it can interpolate a prompt value inline) | No | NOW catalogue static text — outside any hearing/case API's scope |
+| `nt.value(‘defendantMustFirstText’)` | helper:nt | NOW definition catalogue | NOW definition catalogue's static nowTextList / nowRequirementText — not from the hearing-resulted event (though it can interpolate a prompt value inline) | No | NOW catalogue static text — outside any hearing/case API's scope |
+| `nt.value(‘forAPeriodOf’)` | helper:nt | NOW definition catalogue | NOW definition catalogue's static nowTextList / nowRequirementText — not from the hearing-resulted event (though it can interpolate a prompt value inline) | No | NOW catalogue static text — outside any hearing/case API's scope |
+| `nt.value(‘orderDate’)` | helper:nt | NOW definition catalogue | NOW definition catalogue's static nowTextList / nowRequirementText — not from the hearing-resulted event (though it can interpolate a prompt value inline) | No | NOW catalogue static text — outside any hearing/case API's scope |
+| `nt.value(‘orderNotes’)` | helper:nt | NOW definition catalogue | NOW definition catalogue's static nowTextList / nowRequirementText — not from the hearing-resulted event (though it can interpolate a prompt value inline) | No | NOW catalogue static text — outside any hearing/case API's scope |
+| `nt.value(‘orderText’)` | helper:nt | NOW definition catalogue | NOW definition catalogue's static nowTextList / nowRequirementText — not from the hearing-resulted event (though it can interpolate a prompt value inline) | No | NOW catalogue static text — outside any hearing/case API's scope |
+| `nt.value(‘reportOn’)` | helper:nt | NOW definition catalogue | NOW definition catalogue's static nowTextList / nowRequirementText — not from the hearing-resulted event (though it can interpolate a prompt value inline) | No | NOW catalogue static text — outside any hearing/case API's scope |
+| `nt.value(‘reportWithinFiveDaysOfReleaseFromPrison’)` | helper:nt | NOW definition catalogue | NOW definition catalogue's static nowTextList / nowRequirementText — not from the hearing-resulted event (though it can interpolate a prompt value inline) | No | NOW catalogue static text — outside any hearing/case API's scope |
+| `nt.value(‘reportWithinFiveDaysOfTheMakingOfThisOrder’)` | helper:nt | NOW definition catalogue | NOW definition catalogue's static nowTextList / nowRequirementText — not from the hearing-resulted event (though it can interpolate a prompt value inline) | No | NOW catalogue static text — outside any hearing/case API's scope |
+| `nt.value(‘startingOnTheDateOfThisOrder’)` | helper:nt | NOW definition catalogue | NOW definition catalogue's static nowTextList / nowRequirementText — not from the hearing-resulted event (though it can interpolate a prompt value inline) | No | NOW catalogue static text — outside any hearing/case API's scope |
+| `nt.value(‘to’)` | helper:nt | NOW definition catalogue | NOW definition catalogue's static nowTextList / nowRequirementText — not from the hearing-resulted event (though it can interpolate a prompt value inline) | No | NOW catalogue static text — outside any hearing/case API's scope |
+| `orderDate` | date field | Hearing-resulted event | derived: the ordered judicial result's orderedDate | No | no order/result date field — closest are hearing.hearingDate / offences[].convictionDate / .pleaDate |
+| `orderingCourt.courtCentreName` | field | Hearing-resulted event | resolved court-house lookup (courtCentre.name / convictingCourt.name) | Yes | hearing.courtDetails.court.courtHouseName |
+| `orderingCourt.ljaCode` | field | Hearing-resulted event | resolved court-house lookup (courtCentre / offence.convictingCourt).lja.ljaCode | No | Court carries courtHouseId/Code/Name only — no separate LJA code field |
+| `orderingCourt.ljaName` | field | Hearing-resulted event | courtCentre.lja.ljaName | Yes | hearing.courtDetails.ljaName |
+| `orderName` | field | NOW definition catalogue | NOW definition catalogue's own `now.name` — static per document type | No | NOW catalogue metadata — not part of any hearing/case API response |
+| `policeStationName` | prompt (value) | Judicial result prompt | judicialResultPrompts[promptReference ≈ "policeStationName"].value / .label (matched case-insensitively) | Partial | no stable promptReference key exists here — would have to fuzzy-match offences[].results[].resultTexts[].label against a hardcoded display string for "policeStationName", then read .value |
+| `prisonOrganisationName` | prompt (value) | Judicial result prompt | judicialResultPrompts[promptReference ≈ "prisonOrganisationName"].value / .label (matched case-insensitively) | Partial | no stable promptReference key exists here — would have to fuzzy-match offences[].results[].resultTexts[].label against a hardcoded display string for "prisonOrganisationName", then read .value |
+| `reference` | field | Hearing-resulted event | offence's case: prosecutionCaseIdentifier.caseURN (or .prosecutionAuthorityReference) | Yes | prosecutionCase.caseURN |
+| `reportAtTime` | prompt (value) | Judicial result prompt | judicialResultPrompts[promptReference ≈ "reportAtTime"].value / .label (matched case-insensitively) | Partial | no stable promptReference key exists here — would have to fuzzy-match offences[].results[].resultTexts[].label against a hardcoded display string for "reportAtTime", then read .value |
+| `reportOnDate` | prompt (value) | Judicial result prompt | judicialResultPrompts[promptReference ≈ "reportOnDate"].value / .label (matched case-insensitively) | Partial | no stable promptReference key exists here — would have to fuzzy-match offences[].results[].resultTexts[].label against a hardcoded display string for "reportOnDate", then read .value |
+| `reportWithinFiveDaysOfReleaseFromPrison` | prompt (value) | Judicial result prompt | judicialResultPrompts[promptReference ≈ "reportWithinFiveDaysOfReleaseFromPrison"].value / .label (matched case-insensitively) | Partial | no stable promptReference key exists here — would have to fuzzy-match offences[].results[].resultTexts[].label against a hardcoded display string for "reportWithinFiveDaysOfReleaseFromPrison", then read .value |
+| `reportWithinFiveDaysOfTheMakingOfThisOrder` | prompt (value) | Judicial result prompt | judicialResultPrompts[promptReference ≈ "reportWithinFiveDaysOfTheMakingOfThisOrder"].value / .label (matched case-insensitively) | Partial | no stable promptReference key exists here — would have to fuzzy-match offences[].results[].resultTexts[].label against a hardcoded display string for "reportWithinFiveDaysOfTheMakingOfThisOrder", then read .value |
+| `title` | field | Hearing-resulted event | offence.offenceTitle | Yes | offences[].title |
+| `wording` | field | Hearing-resulted event | offence.wording + "\n" + offence.offenceLegislation | Yes | offences[].wording + "\n" + offences[].offenceLegislation (kept as two separate fields here) |
