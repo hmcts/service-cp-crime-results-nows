@@ -1,0 +1,22 @@
+{
+  "nowSubscriptions": [
+    {
+      "isNowSubscription": true,
+      "isEDTSubscription": false,
+      "applySubscriptionRules": true,
+      "subscriptionVocabulary": {
+        "anyAppearance": true,
+        "anyMajorCreditor": true,
+        "anyCourtHearing": true,
+        "adultOrYouthDefendant": true,
+        "inCustody": true,
+        "custodyLocationIsPrison": true,
+        "atleastOneCustodialResult": true,
+        "includedPrompts": [],
+        "excludedPrompts": [],
+        "includedResults": [],
+        "excludedResults": []
+      }
+    }
+  ]
+}

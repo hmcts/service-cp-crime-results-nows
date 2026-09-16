@@ -59,5 +59,11 @@ dependencies {
   implementation 'com.azure:azure-identity:1.18.5'
   implementation 'org.awaitility:awaitility:4.3.0'
 
+  implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+  implementation 'org.postgresql:postgresql'
+  implementation 'org.springframework.boot:spring-boot-starter-flyway'
+  implementation 'org.flywaydb:flyway-core'
+  implementation 'org.flywaydb:flyway-database-postgresql'
+
   testImplementation 'org.wiremock:wiremock-standalone:3.13.2'
 }

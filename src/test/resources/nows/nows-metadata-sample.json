@@ -1,0 +1,22 @@
+{
+  "nows": [
+    {
+      "id": "now-def-006",
+      "name": "WEE_CustodialSentence",
+      "includeAllResults": false,
+      "nowTextList": [
+        { "nowReference": "orderText", "text": "This warrant authorises...", "welshText": null }
+      ],
+      "nowRequirements": [
+        {
+          "resultDefinitionId": "3f8e2a10-9c44-4b6a-8f01-2b7d9e5a6c11",
+          "primary": true,
+          "parentNowRequirementId": null,
+          "rootResultDefinitionId": null,
+          "nowRequirementText": [],
+          "nowRequirements": []
+        }
+      ]
+    }
+  ]
+}
