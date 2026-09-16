@@ -24,6 +24,8 @@ public class PostgresInitialise implements ApplicationContextInitializer<Configu
 
     static void assertPostgresReachable(final String url, final String user, final String password) {
         try (Connection conn = DriverManager.getConnection(url, user, password)) {
+            // Deliberately empty — the only thing under test is whether the connection can be
+            // opened at all; try-with-resources closes it immediately either way.
         } catch (SQLException e) {
             throw new IllegalStateException(
                     "\n\n*** Integration tests require PostgreSQL on localhost:5432 (database: nowsdb) ***\n"

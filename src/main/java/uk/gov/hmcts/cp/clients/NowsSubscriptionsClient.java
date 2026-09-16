@@ -20,6 +20,9 @@ public class NowsSubscriptionsClient {
 
     private static final String ACCEPT_NOW_SUBSCRIPTIONS =
             "application/vnd.referencedata.query.get-now-subscriptions+json";
+    // Fixed resource path on the reference-data service — only the host/port (appProperties
+    // .getReferenceDataUrl()) is meant to vary per environment, not this path.
+    @SuppressWarnings("java:S1075")
     public static final String NOW_SUBSCRIPTIONS_PATH = "/referencedata-query-api/query/api/rest/referencedata/now-subscriptions";
 
     private final AppPropertiesBackend appProperties;

@@ -82,7 +82,7 @@ class EventRepositoryTest extends RepositoryIntegrationTestBase {
         defendantRepository.save(DefendantEntity.builder()
                 .id(defendantRowId)
                 .hearingId(hearingRowId)
-                .masterDefendantId(UUID.randomUUID().toString())
+                .masterDefendantId(UUID.randomUUID())
                 .createdAt(OffsetDateTime.now(ZoneOffset.UTC))
                 .build());
         return defendantRowId;

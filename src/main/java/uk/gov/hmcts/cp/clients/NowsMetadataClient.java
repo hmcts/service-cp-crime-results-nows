@@ -20,6 +20,9 @@ public class NowsMetadataClient {
 
     private static final String ACCEPT_NOWS_METADATA =
             "application/vnd.referencedata.get-nows-metadata+json";
+    // Fixed resource path on the reference-data service — only the host/port (appProperties
+    // .getReferenceDataUrl()) is meant to vary per environment, not this path.
+    @SuppressWarnings("java:S1075")
     public static final String NOWS_METADATA_PATH = "/referencedata-query-api/query/api/rest/referencedata/nows-metadata";
 
     private final AppPropertiesBackend appProperties;

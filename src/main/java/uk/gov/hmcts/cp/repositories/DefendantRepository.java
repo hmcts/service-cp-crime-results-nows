@@ -11,7 +11,7 @@ import java.util.UUID;
 @Repository
 public interface DefendantRepository extends JpaRepository<DefendantEntity, UUID> {
 
-    Optional<DefendantEntity> findByHearingIdAndMasterDefendantId(UUID hearingId, String masterDefendantId);
+    Optional<DefendantEntity> findByHearingIdAndMasterDefendantId(UUID hearingId, UUID masterDefendantId);
 
     List<DefendantEntity> findByHearingId(UUID hearingId);
 }

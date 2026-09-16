@@ -29,7 +29,7 @@ public class DefendantEntity {
     private UUID hearingId;
 
     @Column(name = "master_defendant_id")
-    private String masterDefendantId;
+    private UUID masterDefendantId;
 
     @Column(name = "created_at")
     private OffsetDateTime createdAt;
