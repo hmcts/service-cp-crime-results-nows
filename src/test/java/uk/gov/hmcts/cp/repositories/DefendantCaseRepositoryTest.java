@@ -16,6 +16,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class DefendantCaseRepositoryTest extends RepositoryIntegrationTestBase {
 
+    private static final UUID HEARING_ROW_ID = UUID.fromString("00000000-0000-0000-0000-000000000001");
+    private static final UUID HEARING_ID = UUID.fromString("00000000-0000-0000-0000-000000000002");
+    private static final UUID DEFENDANT_ROW_ID = UUID.fromString("00000000-0000-0000-0000-000000000003");
+    private static final UUID MASTER_DEFENDANT_ID = UUID.fromString("00000000-0000-0000-0000-000000000004");
+    private static final UUID DEFENDANT_CASE_ROW_ID = UUID.fromString("00000000-0000-0000-0000-000000000005");
+
     @Autowired
     private HearingRepository hearingRepository;
 
@@ -30,7 +36,7 @@ class DefendantCaseRepositoryTest extends RepositoryIntegrationTestBase {
     void findByCaseUrnAndDefendantId_should_returnEntity_whenMatchExists() {
         final UUID defendantRowId = aSavedDefendant();
         defendantCaseRepository.save(DefendantCaseEntity.builder()
-                .id(UUID.randomUUID())
+                .id(DEFENDANT_CASE_ROW_ID)
                 .defendantRowId(defendantRowId)
                 .caseUrn("RC363968376")
                 .defendantId("d2151771-41a1-42e1-af36-a99d9b39c0b2")
@@ -49,20 +55,18 @@ class DefendantCaseRepositoryTest extends RepositoryIntegrationTestBase {
     }
 
     private UUID aSavedDefendant() {
-        final UUID hearingRowId = UUID.randomUUID();
         hearingRepository.save(HearingEntity.builder()
-                .id(hearingRowId)
-                .hearingId(UUID.randomUUID())
+                .id(HEARING_ROW_ID)
+                .hearingId(HEARING_ID)
                 .hearingDay(LocalDate.of(2026, 9, 2))
                 .createdAt(OffsetDateTime.now(ZoneOffset.UTC))
                 .build());
-        final UUID defendantRowId = UUID.randomUUID();
         defendantRepository.save(DefendantEntity.builder()
-                .id(defendantRowId)
-                .hearingId(hearingRowId)
-                .masterDefendantId(UUID.randomUUID())
+                .id(DEFENDANT_ROW_ID)
+                .hearingId(HEARING_ROW_ID)
+                .masterDefendantId(MASTER_DEFENDANT_ID)
                 .createdAt(OffsetDateTime.now(ZoneOffset.UTC))
                 .build());
-        return defendantRowId;
+        return DEFENDANT_ROW_ID;
     }
 }

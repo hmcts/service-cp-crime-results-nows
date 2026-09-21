@@ -16,6 +16,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class DefendantSnapshotRepositoryTest extends RepositoryIntegrationTestBase {
 
+    private static final UUID HEARING_ROW_ID = UUID.fromString("00000000-0000-0000-0000-000000000001");
+    private static final UUID HEARING_ID = UUID.fromString("00000000-0000-0000-0000-000000000002");
+    private static final UUID DEFENDANT_ROW_ID = UUID.fromString("00000000-0000-0000-0000-000000000003");
+    private static final UUID MASTER_DEFENDANT_ID = UUID.fromString("00000000-0000-0000-0000-000000000004");
+    private static final UUID DEFENDANT_SNAPSHOT_ROW_ID = UUID.fromString("00000000-0000-0000-0000-000000000005");
+    private static final UUID NO_MATCH_DEFENDANT_ROW_ID = UUID.fromString("00000000-0000-0000-0000-000000000099");
+
     @Autowired
     private HearingRepository hearingRepository;
 
@@ -30,7 +37,7 @@ class DefendantSnapshotRepositoryTest extends RepositoryIntegrationTestBase {
     void findByDefendantRowId_should_returnContent_whenMatchExists() {
         final UUID defendantRowId = aSavedDefendant();
         defendantSnapshotRepository.save(DefendantSnapshotEntity.builder()
-                .id(UUID.randomUUID())
+                .id(DEFENDANT_SNAPSHOT_ROW_ID)
                 .defendantRowId(defendantRowId)
                 .content("{\"defendant\":{\"firstName\":\"Example\"}}")
                 .createdAt(OffsetDateTime.now(ZoneOffset.UTC))
@@ -45,24 +52,22 @@ class DefendantSnapshotRepositoryTest extends RepositoryIntegrationTestBase {
     @Transactional
     @Test
     void findByDefendantRowId_should_returnEmpty_whenNoMatch() {
-        assertThat(defendantSnapshotRepository.findByDefendantRowId(UUID.randomUUID())).isEmpty();
+        assertThat(defendantSnapshotRepository.findByDefendantRowId(NO_MATCH_DEFENDANT_ROW_ID)).isEmpty();
     }
 
     private UUID aSavedDefendant() {
-        final UUID hearingRowId = UUID.randomUUID();
         hearingRepository.save(HearingEntity.builder()
-                .id(hearingRowId)
-                .hearingId(UUID.randomUUID())
+                .id(HEARING_ROW_ID)
+                .hearingId(HEARING_ID)
                 .hearingDay(LocalDate.of(2026, 9, 2))
                 .createdAt(OffsetDateTime.now(ZoneOffset.UTC))
                 .build());
-        final UUID defendantRowId = UUID.randomUUID();
         defendantRepository.save(DefendantEntity.builder()
-                .id(defendantRowId)
-                .hearingId(hearingRowId)
-                .masterDefendantId(UUID.randomUUID())
+                .id(DEFENDANT_ROW_ID)
+                .hearingId(HEARING_ROW_ID)
+                .masterDefendantId(MASTER_DEFENDANT_ID)
                 .createdAt(OffsetDateTime.now(ZoneOffset.UTC))
                 .build());
-        return defendantRowId;
+        return DEFENDANT_ROW_ID;
     }
 }

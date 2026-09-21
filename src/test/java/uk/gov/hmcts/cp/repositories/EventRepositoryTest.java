@@ -16,6 +16,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class EventRepositoryTest extends RepositoryIntegrationTestBase {
 
+    private static final UUID HEARING_ROW_ID = UUID.fromString("00000000-0000-0000-0000-000000000001");
+    private static final UUID HEARING_ID = UUID.fromString("00000000-0000-0000-0000-000000000002");
+    private static final UUID DEFENDANT_ROW_ID = UUID.fromString("00000000-0000-0000-0000-000000000003");
+    private static final UUID MASTER_DEFENDANT_ID = UUID.fromString("00000000-0000-0000-0000-000000000004");
+    private static final UUID EVENT_ROW_ID = UUID.fromString("00000000-0000-0000-0000-000000000005");
+    private static final UUID EVENT_ROW_ID_2 = UUID.fromString("00000000-0000-0000-0000-000000000006");
+    private static final UUID NO_MATCH_DEFENDANT_ROW_ID = UUID.fromString("00000000-0000-0000-0000-000000000099");
+
     @Autowired
     private HearingRepository hearingRepository;
 
@@ -30,7 +38,7 @@ class EventRepositoryTest extends RepositoryIntegrationTestBase {
     void findByDefendantRowIdAndEventType_should_returnEntity_whenMatchExists() {
         final UUID defendantRowId = aSavedDefendant();
         eventRepository.save(EventEntity.builder()
-                .id(UUID.randomUUID())
+                .id(EVENT_ROW_ID)
                 .defendantRowId(defendantRowId)
                 .eventType("WEE_CustodialSentence")
                 .matchedResultTypeIds("[\"3f8e2a10-9c44-4b6a-8f01-2b7d9e5a6c11\"]")
@@ -46,14 +54,14 @@ class EventRepositoryTest extends RepositoryIntegrationTestBase {
     void findByDefendantRowId_should_returnEveryEventType_forThatDefendant() {
         final UUID defendantRowId = aSavedDefendant();
         eventRepository.save(EventEntity.builder()
-                .id(UUID.randomUUID())
+                .id(EVENT_ROW_ID)
                 .defendantRowId(defendantRowId)
                 .eventType("WEE_CustodialSentence")
                 .matchedResultTypeIds("[\"3f8e2a10-9c44-4b6a-8f01-2b7d9e5a6c11\"]")
                 .matchedAt(OffsetDateTime.now(ZoneOffset.UTC))
                 .build());
         eventRepository.save(EventEntity.builder()
-                .id(UUID.randomUUID())
+                .id(EVENT_ROW_ID_2)
                 .defendantRowId(defendantRowId)
                 .eventType("NEE_FootballBanning")
                 .matchedResultTypeIds("[\"9a1b2c3d-4e5f-6071-8293-a4b5c6d7e8f9\"]")
@@ -66,25 +74,23 @@ class EventRepositoryTest extends RepositoryIntegrationTestBase {
     @Transactional
     @Test
     void findByDefendantRowIdAndEventType_should_returnEmpty_whenNoMatch() {
-        assertThat(eventRepository.findByDefendantRowIdAndEventType(UUID.randomUUID(), "WEE_CustodialSentence"))
+        assertThat(eventRepository.findByDefendantRowIdAndEventType(NO_MATCH_DEFENDANT_ROW_ID, "WEE_CustodialSentence"))
                 .isEmpty();
     }
 
     private UUID aSavedDefendant() {
-        final UUID hearingRowId = UUID.randomUUID();
         hearingRepository.save(HearingEntity.builder()
-                .id(hearingRowId)
-                .hearingId(UUID.randomUUID())
+                .id(HEARING_ROW_ID)
+                .hearingId(HEARING_ID)
                 .hearingDay(LocalDate.of(2026, 9, 2))
                 .createdAt(OffsetDateTime.now(ZoneOffset.UTC))
                 .build());
-        final UUID defendantRowId = UUID.randomUUID();
         defendantRepository.save(DefendantEntity.builder()
-                .id(defendantRowId)
-                .hearingId(hearingRowId)
-                .masterDefendantId(UUID.randomUUID())
+                .id(DEFENDANT_ROW_ID)
+                .hearingId(HEARING_ROW_ID)
+                .masterDefendantId(MASTER_DEFENDANT_ID)
                 .createdAt(OffsetDateTime.now(ZoneOffset.UTC))
                 .build());
-        return defendantRowId;
+        return DEFENDANT_ROW_ID;
     }
 }
