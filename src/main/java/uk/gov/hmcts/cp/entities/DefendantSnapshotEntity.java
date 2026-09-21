@@ -16,7 +16,7 @@ import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "defendant_snapshot")
+@Table(name = "cp_defendant_snapshot")
 @Getter
 @Builder(toBuilder = true)
 @NoArgsConstructor

@@ -16,7 +16,7 @@ import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "event")
+@Table(name = "cp_event")
 @Getter
 @Builder(toBuilder = true)
 @NoArgsConstructor

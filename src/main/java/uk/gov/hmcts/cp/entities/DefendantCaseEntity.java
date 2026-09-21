@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 import java.util.UUID;
 
 @Entity
-@Table(name = "defendant_case")
+@Table(name = "cp_defendant_case")
 @Getter
 @Builder(toBuilder = true)
 @NoArgsConstructor
