@@ -9,11 +9,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.client.RestClient;
 import uk.gov.hmcts.cp.config.AppPropertiesBackend;
+import uk.gov.hmcts.cp.domain.nowscompute.NowMetadataResponse.NowDefinition;
 
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.UUID;
+import java.time.LocalDate;
+import java.util.List;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
@@ -21,13 +23,14 @@ import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static java.net.HttpURLConnection.HTTP_OK;
+import static org.assertj.core.api.Assertions.assertThat;
 
-class ResultsClientTest {
+class NowsMetadataClientTest {
 
-    private static final UUID HEARING_ID = UUID.fromString("00000000-0000-0000-0000-000000000011");
+    private static final LocalDate ACTIVE_AT = LocalDate.of(2026, 9, 2);
 
     private WireMockServer wireMockServer;
-    private ResultsClient resultsClient;
+    private NowsMetadataClient nowsMetadataClient;
 
     @BeforeEach
     void beforeEach() {
@@ -38,7 +41,7 @@ class ResultsClientTest {
         final AppPropertiesBackend appProperties = new AppPropertiesBackend(
                 "http://localhost:8081", "00000000-0000-0000-0000-000000000000",
                 "http://localhost:8081", "00000000-0000-0000-0000-000000000000");
-        resultsClient = new ResultsClient(appProperties, RestClient.create());
+        nowsMetadataClient = new NowsMetadataClient(appProperties, RestClient.create());
     }
 
     @AfterEach
@@ -49,18 +52,39 @@ class ResultsClientTest {
     }
 
     @Test
-    void getHearingDetails_should_callCorrectUrlAndAcceptHeader() {
-        final String url = String.format("%s/%s", ResultsClient.RESULTS_QUERY_PATH, HEARING_ID);
+    void getNowDefinitions_should_callCorrectUrlAndAcceptHeader() {
+        final String url = NowsMetadataClient.NOWS_METADATA_PATH + "?on=" + ACTIVE_AT;
         stubFor(WireMock.get(urlEqualTo(url)).willReturn(aResponse()
                 .withStatus(HTTP_OK)
                 .withHeader("Content-Type", "application/json")
-                .withBody(readResourceContents("nows/hearing-details-no-cases.json"))));
+                .withBody(readResourceContents("nows/nows-metadata-sample.json"))));
 
-        resultsClient.getHearingDetails(HEARING_ID);
+        nowsMetadataClient.getNowDefinitions(ACTIVE_AT);
 
         verify(getRequestedFor(urlEqualTo(url))
-                .withHeader("Accept", WireMock.equalTo("application/vnd.results.hearing-details-internal+json"))
+                .withHeader("Accept", WireMock.equalTo("application/vnd.referencedata.get-nows-metadata+json"))
                 .withHeader("CJSCPPUID", WireMock.equalTo("00000000-0000-0000-0000-000000000000")));
+    }
+
+    @Test
+    void getNowDefinitions_should_deserializeRequirementTreeAndStaticText() {
+        final String url = NowsMetadataClient.NOWS_METADATA_PATH + "?on=" + ACTIVE_AT;
+        stubFor(WireMock.get(urlEqualTo(url)).willReturn(aResponse()
+                .withStatus(HTTP_OK)
+                .withHeader("Content-Type", "application/json")
+                .withBody(readResourceContents("nows/nows-metadata-sample.json"))));
+
+        final List<NowDefinition> definitions = nowsMetadataClient.getNowDefinitions(ACTIVE_AT);
+
+        assertThat(definitions).hasSize(1);
+        final NowDefinition definition = definitions.get(0);
+        assertThat(definition.getName()).isEqualTo("WEE_CustodialSentence");
+        assertThat(definition.getNowTextList()).hasSize(1);
+        assertThat(definition.getNowTextList().get(0).getNowReference()).isEqualTo("orderText");
+        assertThat(definition.getNowRequirements()).hasSize(1);
+        assertThat(definition.getNowRequirements().get(0).getResultDefinitionId())
+                .isEqualTo("3f8e2a10-9c44-4b6a-8f01-2b7d9e5a6c11");
+        assertThat(definition.getNowRequirements().get(0).getPrimary()).isTrue();
     }
 
     @SneakyThrows

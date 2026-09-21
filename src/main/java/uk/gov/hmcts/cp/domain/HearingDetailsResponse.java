@@ -314,6 +314,7 @@ public class HearingDetailsResponse {
     @NoArgsConstructor
     @Getter
     public static class JudicialResult {
+        private String judicialResultTypeId;
         private String cjsCode;
         private String label;
         private String resultText;

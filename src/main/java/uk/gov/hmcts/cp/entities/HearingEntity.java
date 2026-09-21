@@ -1,0 +1,37 @@
+package uk.gov.hmcts.cp.entities;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
+import java.util.UUID;
+
+@Entity
+@Table(name = "cp_hearing")
+@Getter
+@Builder(toBuilder = true)
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode
+public class HearingEntity {
+
+    @Id
+    private UUID id;
+
+    @Column(name = "hearing_id")
+    private UUID hearingId;
+
+    @Column(name = "hearing_day")
+    private LocalDate hearingDay;
+
+    @Column(name = "created_at")
+    private OffsetDateTime createdAt;
+}
