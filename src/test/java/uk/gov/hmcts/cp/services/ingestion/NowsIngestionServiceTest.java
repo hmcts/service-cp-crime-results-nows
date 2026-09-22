@@ -13,6 +13,7 @@ import uk.gov.hmcts.cp.domain.HearingDetailsResponse;
 import uk.gov.hmcts.cp.domain.HearingDetailsResponse.Defendant;
 import uk.gov.hmcts.cp.domain.HearingDetailsResponse.ProsecutionCase;
 import uk.gov.hmcts.cp.exceptions.IncompleteHearingDetailsException;
+import uk.gov.hmcts.cp.services.nowscompute.DefendantMerger;
 import uk.gov.hmcts.cp.services.nowscompute.NowsDecisionEngine;
 
 import java.time.LocalDate;
@@ -40,6 +41,8 @@ class NowsIngestionServiceTest {
     private ResultsClient resultsClient;
     @Spy
     private ObjectMapper objectMapper = new ObjectMapper();
+    @Spy
+    private DefendantMerger defendantMerger = new DefendantMerger();
     @Mock
     private NowsDecisionEngine decisionEngine;
 
@@ -60,7 +63,7 @@ class NowsIngestionServiceTest {
     @Test
     void ingestAndProcessOnce_should_useCachedPayload_whenRedisHit() {
         when(cacheClient.get(HEARING_ID, HEARING_DAY))
-                .thenReturn(Optional.of("{\"hearing\":{\"prosecutionCases\":[{\"id\":\"case-1\",\"defendants\":[{\"id\":\"11111111-1111-1111-1111-111111111111\"}]}]}}"));
+                .thenReturn(Optional.of("{\"hearing\":{\"prosecutionCases\":[{\"id\":\"case-1\",\"defendants\":[{\"id\":\"11111111-1111-1111-1111-111111111111\",\"masterDefendantId\":\"21111111-1111-1111-1111-111111111111\"}]}]}}"));
         when(decisionEngine.determineEligibleEventTypes(any(), any())).thenReturn(Set.of());
 
         ingestionService.ingestAndProcessOnce(HEARING_ID, HEARING_DAY);
@@ -103,7 +106,10 @@ class NowsIngestionServiceTest {
     }
 
     private HearingDetailsResponse hearingWithOneDefendant() {
-        final Defendant defendant = Defendant.builder().id("11111111-1111-1111-1111-111111111111").build();
+        final Defendant defendant = Defendant.builder()
+                .id("11111111-1111-1111-1111-111111111111")
+                .masterDefendantId("21111111-1111-1111-1111-111111111111")
+                .build();
         final ProsecutionCase prosecutionCase = ProsecutionCase.builder()
                 .id("case-1")
                 .defendants(List.of(defendant))
@@ -116,8 +122,14 @@ class NowsIngestionServiceTest {
     }
 
     private HearingDetailsResponse hearingWithTwoDefendantsOnOneCase() {
-        final Defendant defendantOne = Defendant.builder().id("11111111-1111-1111-1111-111111111111").build();
-        final Defendant defendantTwo = Defendant.builder().id("22222222-2222-2222-2222-222222222222").build();
+        final Defendant defendantOne = Defendant.builder()
+                .id("11111111-1111-1111-1111-111111111111")
+                .masterDefendantId("21111111-1111-1111-1111-111111111111")
+                .build();
+        final Defendant defendantTwo = Defendant.builder()
+                .id("22222222-2222-2222-2222-222222222222")
+                .masterDefendantId("22222222-2222-2222-2222-222222222222")
+                .build();
         final ProsecutionCase prosecutionCase = ProsecutionCase.builder()
                 .id("case-1")
                 .defendants(List.of(defendantOne, defendantTwo))

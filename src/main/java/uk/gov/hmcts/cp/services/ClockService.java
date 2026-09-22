@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Clock;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 
@@ -22,5 +23,9 @@ public class ClockService {
 
     public OffsetDateTime nowOffsetUTC() {
         return clock.instant().atOffset(ZoneOffset.UTC);
+    }
+
+    public LocalDate today() {
+        return nowOffsetUTC().toLocalDate();
     }
 }
