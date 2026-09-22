@@ -11,6 +11,7 @@ import uk.gov.hmcts.cp.domain.nowscompute.NowsVocabulary;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class NowsVocabularyResolver {
@@ -57,48 +58,52 @@ public class NowsVocabularyResolver {
     }
 
     private boolean isCustodialResult(final JudicialResult result) {
-        if (result.getJudicialResultPrompts() == null) {
-            return false;
-        }
-        return result.getJudicialResultPrompts().stream()
-                .map(JudicialResultPrompt::getPromptReference)
-                .anyMatch(PRISON_ORGANISATION_NAME_PROMPT::equals);
+        return result.getJudicialResultPrompts() != null
+                && result.getJudicialResultPrompts().stream()
+                        .map(JudicialResultPrompt::getPromptReference)
+                        .anyMatch(PRISON_ORGANISATION_NAME_PROMPT::equals);
     }
 
     private Attendance resolveAttendance(final MergedDefendant defendant, final HearingDetail hearing) {
-        if (hearing.getDefendantAttendance() == null) {
-            return new Attendance(false, false);
-        }
         boolean inPerson = false;
         boolean byVideo = false;
-        for (final DefendantAttendance attendance : hearing.getDefendantAttendance()) {
-            if (!defendant.defendantIds().contains(attendance.getDefendantId()) || attendance.getAttendanceDays() == null) {
-                continue;
-            }
-            for (final AttendanceDay day : attendance.getAttendanceDays()) {
-                if (!matchesAResultDate(defendant, day.getDay())) {
-                    continue;
+        if (hearing.getDefendantAttendance() != null) {
+            for (final DefendantAttendance attendance : hearing.getDefendantAttendance()) {
+                if (defendant.defendantIds().contains(attendance.getDefendantId())
+                        && attendance.getAttendanceDays() != null) {
+                    for (final AttendanceDay day : attendance.getAttendanceDays()) {
+                        if (matchesAResultDate(defendant, day.getDay())) {
+                            inPerson = inPerson || ATTENDANCE_IN_PERSON.equals(day.getAttendanceType());
+                            byVideo = byVideo || ATTENDANCE_BY_VIDEO.equals(day.getAttendanceType());
+                        }
+                    }
                 }
-                inPerson = inPerson || ATTENDANCE_IN_PERSON.equals(day.getAttendanceType());
-                byVideo = byVideo || ATTENDANCE_BY_VIDEO.equals(day.getAttendanceType());
             }
         }
         return new Attendance(inPerson, byVideo);
     }
 
     private boolean matchesAResultDate(final MergedDefendant defendant, final String day) {
-        if (day == null) {
-            return false;
+        final boolean matches;
+        final Optional<LocalDate> attendanceDay = day == null ? Optional.empty() : parseDate(day);
+        if (attendanceDay.isEmpty()) {
+            matches = false;
+        } else {
+            matches = defendant.results().stream()
+                    .map(JudicialResult::getOrderedDate)
+                    .anyMatch(attendanceDay.get()::equals);
         }
-        final LocalDate attendanceDay;
+        return matches;
+    }
+
+    private Optional<LocalDate> parseDate(final String day) {
+        Optional<LocalDate> parsed;
         try {
-            attendanceDay = LocalDate.parse(day);
+            parsed = Optional.of(LocalDate.parse(day));
         } catch (DateTimeParseException e) {
-            return false;
+            parsed = Optional.empty();
         }
-        return defendant.results().stream()
-                .map(JudicialResult::getOrderedDate)
-                .anyMatch(attendanceDay::equals);
+        return parsed;
     }
 
     private record Attendance(boolean inPerson, boolean byVideo) {

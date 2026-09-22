@@ -20,30 +20,43 @@ public class DefendantMerger {
 
     public List<MergedDefendant> merge(final HearingDetail hearing) {
         final Map<String, Accumulator> byMasterDefendantId = new LinkedHashMap<>();
+        mergeProsecutionCases(hearing, byMasterDefendantId);
+        mergeCourtApplications(hearing, byMasterDefendantId);
+        mergeDefendantJudicialResults(hearing, byMasterDefendantId);
+        return byMasterDefendantId.values().stream().map(Accumulator::toMergedDefendant).toList();
+    }
 
+    private void mergeProsecutionCases(final HearingDetail hearing, final Map<String, Accumulator> byMasterDefendantId) {
         for (final ProsecutionCase prosecutionCase : nullSafe(hearing.getProsecutionCases())) {
             final boolean isCps = prosecutionCase.getProsecutor() != null
                     && Boolean.TRUE.equals(prosecutionCase.getProsecutor().getIsCps());
             for (final Defendant defendant : nullSafe(prosecutionCase.getDefendants())) {
-                final String masterDefendantId = defendant.getMasterDefendantId();
-                if (masterDefendantId == null) {
-                    continue;
-                }
-                final Accumulator acc = byMasterDefendantId.computeIfAbsent(masterDefendantId, Accumulator::new);
-                acc.isYouth = acc.isYouth || Boolean.TRUE.equals(defendant.getIsYouth());
-                acc.cpsProsecuted = acc.cpsProsecuted || isCps;
-                if (acc.custody == null && defendant.getPersonDefendant() != null
-                        && defendant.getPersonDefendant().getCustodialEstablishment() != null) {
-                    acc.custody = defendant.getPersonDefendant().getCustodialEstablishment().getCustody();
-                }
-                acc.defendantIds.add(defendant.getId());
-                acc.results.addAll(nullSafe(defendant.getDefendantCaseJudicialResults()));
-                for (final Offence offence : nullSafe(defendant.getOffences())) {
-                    acc.results.addAll(nullSafe(offence.getJudicialResults()));
-                }
+                mergeDefendant(byMasterDefendantId, defendant, isCps);
             }
         }
+    }
 
+    private void mergeDefendant(final Map<String, Accumulator> byMasterDefendantId, final Defendant defendant,
+                                 final boolean isCps) {
+        final String masterDefendantId = defendant.getMasterDefendantId();
+        if (masterDefendantId == null) {
+            return;
+        }
+        final Accumulator acc = byMasterDefendantId.computeIfAbsent(masterDefendantId, Accumulator::new);
+        acc.isYouth = acc.isYouth || Boolean.TRUE.equals(defendant.getIsYouth());
+        acc.cpsProsecuted = acc.cpsProsecuted || isCps;
+        if (acc.custody == null && defendant.getPersonDefendant() != null
+                && defendant.getPersonDefendant().getCustodialEstablishment() != null) {
+            acc.custody = defendant.getPersonDefendant().getCustodialEstablishment().getCustody();
+        }
+        acc.defendantIds.add(defendant.getId());
+        acc.results.addAll(nullSafe(defendant.getDefendantCaseJudicialResults()));
+        for (final Offence offence : nullSafe(defendant.getOffences())) {
+            acc.results.addAll(nullSafe(offence.getJudicialResults()));
+        }
+    }
+
+    private void mergeCourtApplications(final HearingDetail hearing, final Map<String, Accumulator> byMasterDefendantId) {
         for (final CourtApplication courtApplication : nullSafe(hearing.getCourtApplications())) {
             final String masterDefendantId = masterDefendantIdOf(courtApplication);
             if (masterDefendantId == null) {
@@ -52,7 +65,10 @@ public class DefendantMerger {
             final Accumulator acc = byMasterDefendantId.computeIfAbsent(masterDefendantId, Accumulator::new);
             acc.results.addAll(nullSafe(courtApplication.getJudicialResults()));
         }
+    }
 
+    private void mergeDefendantJudicialResults(final HearingDetail hearing,
+                                                final Map<String, Accumulator> byMasterDefendantId) {
         for (final DefendantJudicialResult defendantJudicialResult : nullSafe(hearing.getDefendantJudicialResults())) {
             final String masterDefendantId = defendantJudicialResult.getMasterDefendantId();
             if (masterDefendantId == null) {
@@ -63,15 +79,12 @@ public class DefendantMerger {
                 acc.results.add(defendantJudicialResult.getJudicialResult());
             }
         }
-
-        return byMasterDefendantId.values().stream().map(Accumulator::toMergedDefendant).toList();
     }
 
     private String masterDefendantIdOf(final CourtApplication courtApplication) {
-        if (courtApplication.getSubject() == null || courtApplication.getSubject().getMasterDefendant() == null) {
-            return null;
-        }
-        return courtApplication.getSubject().getMasterDefendant().getMasterDefendantId();
+        return courtApplication.getSubject() == null || courtApplication.getSubject().getMasterDefendant() == null
+                ? null
+                : courtApplication.getSubject().getMasterDefendant().getMasterDefendantId();
     }
 
     private <T> List<T> nullSafe(final List<T> list) {

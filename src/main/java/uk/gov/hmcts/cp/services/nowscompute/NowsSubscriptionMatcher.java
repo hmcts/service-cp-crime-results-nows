@@ -18,17 +18,31 @@ public class NowsSubscriptionMatcher {
 
     public boolean matches(final NowsSubscription subscription, final NowsVocabulary vocabulary,
                             final MergedDefendant defendant, final Set<String> matchedResultTypeIds) {
-        if (!isTrue(subscription.getIsNowSubscription())) {
-            return false;
+        final boolean matches;
+        if (isTrue(subscription.getIsNowSubscription())) {
+            matches = matchesRules(subscription, vocabulary, defendant, matchedResultTypeIds);
+        } else {
+            matches = false;
         }
-        final NowsSubscriptionVocabulary rules = subscription.getSubscriptionVocabulary();
-        if (!isTrue(subscription.getApplySubscriptionRules()) || rules == null) {
-            return true;
-        }
-        if (isTrue(rules.getIsCpsProsecuted()) && vocabulary.cpsProsecuted()) {
-            return true;
-        }
+        return matches;
+    }
 
+    private boolean matchesRules(final NowsSubscription subscription, final NowsVocabulary vocabulary,
+                                  final MergedDefendant defendant, final Set<String> matchedResultTypeIds) {
+        final NowsSubscriptionVocabulary rules = subscription.getSubscriptionVocabulary();
+        final boolean matches;
+        if (!isTrue(subscription.getApplySubscriptionRules()) || rules == null) {
+            matches = true;
+        } else if (isTrue(rules.getIsCpsProsecuted()) && vocabulary.cpsProsecuted()) {
+            matches = true;
+        } else {
+            matches = matchesEveryRuleDimension(rules, vocabulary, defendant, matchedResultTypeIds);
+        }
+        return matches;
+    }
+
+    private boolean matchesEveryRuleDimension(final NowsSubscriptionVocabulary rules, final NowsVocabulary vocabulary,
+                                               final MergedDefendant defendant, final Set<String> matchedResultTypeIds) {
         final List<JudicialResult> matchedResults = defendant.results().stream()
                 .filter(r -> r.getJudicialResultTypeId() != null && matchedResultTypeIds.contains(r.getJudicialResultTypeId()))
                 .toList();

@@ -13,8 +13,11 @@ import uk.gov.hmcts.cp.domain.HearingDetailsResponse.JudicialResult;
 import uk.gov.hmcts.cp.domain.nowscompute.NowMetadataResponse.NowDefinition;
 import uk.gov.hmcts.cp.domain.nowscompute.NowMetadataResponse.NowRequirement;
 import uk.gov.hmcts.cp.domain.nowscompute.NowsSubscriptionsResponse.NowsSubscription;
+import uk.gov.hmcts.cp.services.ClockService;
 
+import java.time.Clock;
 import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Set;
 
@@ -30,6 +33,7 @@ class NowsDecisionEngineTest {
     private static final String MASTER_DEFENDANT_ID = "21111111-1111-1111-1111-111111111111";
     private static final String REMAND_RESULT_TYPE_ID = "3f8e2a10-9c44-4b6a-8f01-2b7d9e5a6c11";
     private static final LocalDate SITTING_DAY = LocalDate.parse("2026-07-23");
+    private static final LocalDate TODAY = LocalDate.parse("2026-09-22");
 
     @Mock
     private NowsMetadataClient nowsMetadataClient;
@@ -40,12 +44,15 @@ class NowsDecisionEngineTest {
 
     @BeforeEach
     void setUp() {
+        final ClockService fixedClock = new ClockService(
+                Clock.fixed(TODAY.atStartOfDay().toInstant(ZoneOffset.UTC), ZoneOffset.UTC));
         decisionEngine = new NowsDecisionEngine(
                 new NowsVocabularyResolver(),
                 nowsMetadataClient,
                 new NowsMetadataMatcher(),
                 nowsSubscriptionsClient,
-                new NowsSubscriptionMatcher());
+                new NowsSubscriptionMatcher(),
+                fixedClock);
     }
 
     @Test
@@ -104,8 +111,8 @@ class NowsDecisionEngineTest {
     void determineEligibleEventTypes_should_fallBackToToday_whenHearingHasNoSittingDay() {
         final MergedDefendant defendant = remandDefendant();
         final HearingDetail hearing = HearingDetail.builder().hearingDays(List.of()).build();
-        when(nowsMetadataClient.getNowDefinitions(LocalDate.now())).thenReturn(List.of(weeRemandDefinition()));
-        when(nowsSubscriptionsClient.getNowSubscriptions(LocalDate.now()))
+        when(nowsMetadataClient.getNowDefinitions(TODAY)).thenReturn(List.of(weeRemandDefinition()));
+        when(nowsSubscriptionsClient.getNowSubscriptions(TODAY))
                 .thenReturn(List.of(unconditionalSubscription()));
 
         final Set<MatchedEventType> result = decisionEngine.determineEligibleEventTypes(defendant, hearing);
