@@ -7,6 +7,7 @@ import uk.gov.hmcts.cp.domain.HearingDetailsResponse.DefendantJudicialResult;
 import uk.gov.hmcts.cp.domain.HearingDetailsResponse.HearingDetail;
 import uk.gov.hmcts.cp.domain.HearingDetailsResponse.JudicialResult;
 import uk.gov.hmcts.cp.domain.HearingDetailsResponse.Offence;
+import uk.gov.hmcts.cp.domain.HearingDetailsResponse.PersonDefendant;
 import uk.gov.hmcts.cp.domain.HearingDetailsResponse.ProsecutionCase;
 
 import java.util.ArrayList;
@@ -31,13 +32,13 @@ public class DefendantMerger {
             final boolean isCps = prosecutionCase.getProsecutor() != null
                     && Boolean.TRUE.equals(prosecutionCase.getProsecutor().getIsCps());
             for (final Defendant defendant : nullSafe(prosecutionCase.getDefendants())) {
-                mergeDefendant(byMasterDefendantId, defendant, isCps);
+                mergeDefendant(byMasterDefendantId, defendant, isCps, caseUrnOf(prosecutionCase));
             }
         }
     }
 
     private void mergeDefendant(final Map<String, Accumulator> byMasterDefendantId, final Defendant defendant,
-                                 final boolean isCps) {
+                                 final boolean isCps, final String caseUrn) {
         final String masterDefendantId = defendant.getMasterDefendantId();
         if (masterDefendantId == null) {
             return;
@@ -45,15 +46,25 @@ public class DefendantMerger {
         final Accumulator acc = byMasterDefendantId.computeIfAbsent(masterDefendantId, Accumulator::new);
         acc.isYouth = acc.isYouth || Boolean.TRUE.equals(defendant.getIsYouth());
         acc.cpsProsecuted = acc.cpsProsecuted || isCps;
+        if (acc.personDefendant == null) {
+            acc.personDefendant = defendant.getPersonDefendant();
+        }
         if (acc.custody == null && defendant.getPersonDefendant() != null
                 && defendant.getPersonDefendant().getCustodialEstablishment() != null) {
             acc.custody = defendant.getPersonDefendant().getCustodialEstablishment().getCustody();
         }
-        acc.defendantIds.add(defendant.getId());
+        acc.cases.add(new DefendantCaseLink(caseUrn, defendant.getId()));
         acc.results.addAll(nullSafe(defendant.getDefendantCaseJudicialResults()));
         for (final Offence offence : nullSafe(defendant.getOffences())) {
+            acc.offences.add(offence);
             acc.results.addAll(nullSafe(offence.getJudicialResults()));
         }
+    }
+
+    private String caseUrnOf(final ProsecutionCase prosecutionCase) {
+        return prosecutionCase.getProsecutionCaseIdentifier() == null
+                ? null
+                : prosecutionCase.getProsecutionCaseIdentifier().getCaseURN();
     }
 
     private void mergeCourtApplications(final HearingDetail hearing, final Map<String, Accumulator> byMasterDefendantId) {
@@ -96,7 +107,9 @@ public class DefendantMerger {
         private boolean isYouth;
         private boolean cpsProsecuted;
         private String custody;
-        private final List<String> defendantIds = new ArrayList<>();
+        private PersonDefendant personDefendant;
+        private final List<DefendantCaseLink> cases = new ArrayList<>();
+        private final List<Offence> offences = new ArrayList<>();
         private final List<JudicialResult> results = new ArrayList<>();
 
         private Accumulator(final String masterDefendantId) {
@@ -104,7 +117,16 @@ public class DefendantMerger {
         }
 
         private MergedDefendant toMergedDefendant() {
-            return new MergedDefendant(masterDefendantId, isYouth, cpsProsecuted, custody, defendantIds, results);
+            return MergedDefendant.builder()
+                    .masterDefendantId(masterDefendantId)
+                    .isYouth(isYouth)
+                    .cpsProsecuted(cpsProsecuted)
+                    .custody(custody)
+                    .personDefendant(personDefendant)
+                    .cases(cases)
+                    .offences(offences)
+                    .results(results)
+                    .build();
         }
     }
 }

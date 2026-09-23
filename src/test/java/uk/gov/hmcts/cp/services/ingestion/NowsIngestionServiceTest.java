@@ -15,6 +15,7 @@ import uk.gov.hmcts.cp.domain.HearingDetailsResponse.ProsecutionCase;
 import uk.gov.hmcts.cp.exceptions.IncompleteHearingDetailsException;
 import uk.gov.hmcts.cp.services.nowscompute.DefendantMerger;
 import uk.gov.hmcts.cp.services.nowscompute.NowsDecisionEngine;
+import uk.gov.hmcts.cp.services.persistence.NowsRecordService;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -45,6 +46,8 @@ class NowsIngestionServiceTest {
     private DefendantMerger defendantMerger = new DefendantMerger();
     @Mock
     private NowsDecisionEngine decisionEngine;
+    @Mock
+    private NowsRecordService recordService;
 
     @InjectMocks
     private NowsIngestionService ingestionService;

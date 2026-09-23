@@ -124,8 +124,12 @@ class NowsDecisionEngineTest {
         final JudicialResult result = JudicialResult.builder()
                 .judicialResultTypeId(REMAND_RESULT_TYPE_ID)
                 .build();
-        return new MergedDefendant(MASTER_DEFENDANT_ID, false, false, null,
-                List.of("11111111-1111-1111-1111-111111111111"), List.of(result));
+        return MergedDefendant.builder()
+                .masterDefendantId(MASTER_DEFENDANT_ID)
+                .cases(List.of(new DefendantCaseLink("RC363968376", "11111111-1111-1111-1111-111111111111")))
+                .offences(List.of())
+                .results(List.of(result))
+                .build();
     }
 
     private HearingDetail hearingSittingOn(final LocalDate sittingDay) {
