@@ -24,8 +24,6 @@ import java.util.UUID;
 public class HearingEntity {
 
     @Id
-    private UUID id;
-
     @Column(name = "hearing_id")
     private UUID hearingId;
 

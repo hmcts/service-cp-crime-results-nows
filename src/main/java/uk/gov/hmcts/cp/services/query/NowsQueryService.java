@@ -9,7 +9,6 @@ import uk.gov.hmcts.cp.entities.DefendantCaseEntity;
 import uk.gov.hmcts.cp.entities.DefendantEntity;
 import uk.gov.hmcts.cp.entities.DefendantSnapshotEntity;
 import uk.gov.hmcts.cp.entities.EventEntity;
-import uk.gov.hmcts.cp.entities.HearingEntity;
 import uk.gov.hmcts.cp.mappers.NowsQueryMapper;
 import uk.gov.hmcts.cp.openapi.model.DefendantResult;
 import uk.gov.hmcts.cp.repositories.DefendantCaseRepository;
@@ -36,16 +35,17 @@ public class NowsQueryService {
     @Transactional(readOnly = true)
     public DefendantResult getDefendantResult(final String caseUrn, final UUID hearingId, final UUID defendantId,
                                                final String eventType) {
-        final HearingEntity hearing = hearingRepository.findByHearingId(hearingId)
-                .orElseThrow(() -> new EntityNotFoundException("No hearing ingested for the supplied hearingId"));
-        final DefendantEntity defendant = resolveDefendant(caseUrn, defendantId, hearing.getId());
+        if (!hearingRepository.existsById(hearingId)) {
+            throw new EntityNotFoundException("No hearing ingested for the supplied hearingId");
+        }
+        final DefendantEntity defendant = resolveDefendant(caseUrn, defendantId, hearingId);
         final DefendantSnapshotEntity snapshot = defendantSnapshotRepository.findByDefendantRowId(defendant.getId())
                 .orElseThrow(() -> new EntityNotFoundException("No content recorded for the supplied defendant"));
         return queryMapper.toDefendantResult(caseUrn, defendantId, snapshot.getContent(),
                 events(defendant.getId(), eventType));
     }
 
-    private DefendantEntity resolveDefendant(final String caseUrn, final UUID defendantId, final UUID hearingRowId) {
+    private DefendantEntity resolveDefendant(final String caseUrn, final UUID defendantId, final UUID hearingId) {
         final DefendantCaseEntity defendantCase =
                 defendantCaseRepository.findByCaseUrnAndDefendantId(caseUrn, defendantId.toString())
                         .orElseThrow(() -> new EntityNotFoundException(
@@ -53,7 +53,7 @@ public class NowsQueryService {
         final DefendantEntity defendant = defendantRepository.findById(defendantCase.getDefendantRowId())
                 .orElseThrow(() -> new EntityNotFoundException(
                         "No defendant recorded for the supplied caseURN and defendantId"));
-        if (!defendant.getHearingId().equals(hearingRowId)) {
+        if (!defendant.getHearingId().equals(hearingId)) {
             throw new EntityNotFoundException("The supplied defendant was not recorded against the supplied hearing");
         }
         return defendant;

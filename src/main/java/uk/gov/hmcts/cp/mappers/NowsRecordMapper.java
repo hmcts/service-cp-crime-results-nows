@@ -20,7 +20,6 @@ public class NowsRecordMapper {
 
     public HearingEntity toHearing(final UUID hearingId, final LocalDate hearingDay) {
         return HearingEntity.builder()
-                .id(UUID.randomUUID())
                 .hearingId(hearingId)
                 .hearingDay(hearingDay)
                 .createdAt(clockService.nowOffsetUTC())

@@ -40,7 +40,6 @@ import static org.mockito.Mockito.when;
 class NowsRecordServiceTest {
 
     private static final UUID HEARING_ID = UUID.fromString("00000000-0000-0000-0000-000000000001");
-    private static final UUID HEARING_ROW_ID = UUID.fromString("00000000-0000-0000-0000-000000000002");
     private static final UUID DEFENDANT_ROW_ID = UUID.fromString("00000000-0000-0000-0000-000000000003");
     private static final UUID MASTER_DEFENDANT_ID = UUID.fromString("00000000-0000-0000-0000-000000000004");
     private static final LocalDate HEARING_DAY = LocalDate.parse("2026-09-02");
@@ -127,23 +126,22 @@ class NowsRecordServiceTest {
     }
 
     private void stubFreshHearingAndDefendant() {
-        when(hearingRepository.findByHearingId(HEARING_ID)).thenReturn(Optional.empty());
+        when(hearingRepository.existsById(HEARING_ID)).thenReturn(false);
         when(recordMapper.toHearing(HEARING_ID, HEARING_DAY)).thenReturn(hearingEntity());
-        when(hearingRepository.save(any(HearingEntity.class))).thenReturn(hearingEntity());
-        when(defendantRepository.findByHearingIdAndMasterDefendantId(HEARING_ROW_ID, MASTER_DEFENDANT_ID))
+        when(defendantRepository.findByHearingIdAndMasterDefendantId(HEARING_ID, MASTER_DEFENDANT_ID))
                 .thenReturn(Optional.empty());
-        when(recordMapper.toDefendant(HEARING_ROW_ID, MASTER_DEFENDANT_ID)).thenReturn(defendantEntity());
+        when(recordMapper.toDefendant(HEARING_ID, MASTER_DEFENDANT_ID)).thenReturn(defendantEntity());
         when(defendantRepository.save(any(DefendantEntity.class))).thenReturn(defendantEntity());
     }
 
     private void stubExistingHearingAndDefendant() {
-        when(hearingRepository.findByHearingId(HEARING_ID)).thenReturn(Optional.of(hearingEntity()));
-        when(defendantRepository.findByHearingIdAndMasterDefendantId(HEARING_ROW_ID, MASTER_DEFENDANT_ID))
+        when(hearingRepository.existsById(HEARING_ID)).thenReturn(true);
+        when(defendantRepository.findByHearingIdAndMasterDefendantId(HEARING_ID, MASTER_DEFENDANT_ID))
                 .thenReturn(Optional.of(defendantEntity()));
     }
 
     private HearingEntity hearingEntity() {
-        return HearingEntity.builder().id(HEARING_ROW_ID).hearingId(HEARING_ID).build();
+        return HearingEntity.builder().hearingId(HEARING_ID).build();
     }
 
     private DefendantEntity defendantEntity() {

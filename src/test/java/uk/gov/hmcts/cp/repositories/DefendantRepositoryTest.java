@@ -15,13 +15,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class DefendantRepositoryTest extends RepositoryIntegrationTestBase {
 
-    private static final UUID HEARING_ROW_ID = UUID.fromString("00000000-0000-0000-0000-000000000001");
     private static final UUID HEARING_ID = UUID.fromString("00000000-0000-0000-0000-000000000002");
     private static final UUID DEFENDANT_ROW_ID = UUID.fromString("00000000-0000-0000-0000-000000000003");
     private static final UUID MASTER_DEFENDANT_ID = UUID.fromString("00000000-0000-0000-0000-000000000004");
     private static final UUID DEFENDANT_ROW_ID_2 = UUID.fromString("00000000-0000-0000-0000-000000000005");
     private static final UUID MASTER_DEFENDANT_ID_2 = UUID.fromString("00000000-0000-0000-0000-000000000006");
-    private static final UUID NO_MATCH_HEARING_ROW_ID = UUID.fromString("00000000-0000-0000-0000-000000000098");
+    private static final UUID NO_MATCH_HEARING_ID = UUID.fromString("00000000-0000-0000-0000-000000000098");
     private static final UUID NO_MATCH_MASTER_DEFENDANT_ID = UUID.fromString("00000000-0000-0000-0000-000000000099");
 
     @Autowired
@@ -33,15 +32,15 @@ class DefendantRepositoryTest extends RepositoryIntegrationTestBase {
     @Transactional
     @Test
     void findByHearingIdAndMasterDefendantId_should_returnEntity_whenMatchExists() {
-        final UUID hearingRowId = aSavedHearing();
+        final UUID hearingId = aSavedHearing();
         defendantRepository.save(DefendantEntity.builder()
                 .id(DEFENDANT_ROW_ID)
-                .hearingId(hearingRowId)
+                .hearingId(hearingId)
                 .masterDefendantId(MASTER_DEFENDANT_ID)
                 .createdAt(OffsetDateTime.now(ZoneOffset.UTC))
                 .build());
 
-        assertThat(defendantRepository.findByHearingIdAndMasterDefendantId(hearingRowId, MASTER_DEFENDANT_ID))
+        assertThat(defendantRepository.findByHearingIdAndMasterDefendantId(hearingId, MASTER_DEFENDANT_ID))
                 .isPresent();
     }
 
@@ -49,37 +48,36 @@ class DefendantRepositoryTest extends RepositoryIntegrationTestBase {
     @Test
     void findByHearingIdAndMasterDefendantId_should_returnEmpty_whenNoMatch() {
         assertThat(defendantRepository.findByHearingIdAndMasterDefendantId(
-                NO_MATCH_HEARING_ROW_ID, NO_MATCH_MASTER_DEFENDANT_ID))
+                NO_MATCH_HEARING_ID, NO_MATCH_MASTER_DEFENDANT_ID))
                 .isEmpty();
     }
 
     @Transactional
     @Test
     void findByHearingId_should_returnEveryDefendant_onThatHearing() {
-        final UUID hearingRowId = aSavedHearing();
+        final UUID hearingId = aSavedHearing();
         defendantRepository.save(DefendantEntity.builder()
                 .id(DEFENDANT_ROW_ID)
-                .hearingId(hearingRowId)
+                .hearingId(hearingId)
                 .masterDefendantId(MASTER_DEFENDANT_ID)
                 .createdAt(OffsetDateTime.now(ZoneOffset.UTC))
                 .build());
         defendantRepository.save(DefendantEntity.builder()
                 .id(DEFENDANT_ROW_ID_2)
-                .hearingId(hearingRowId)
+                .hearingId(hearingId)
                 .masterDefendantId(MASTER_DEFENDANT_ID_2)
                 .createdAt(OffsetDateTime.now(ZoneOffset.UTC))
                 .build());
 
-        assertThat(defendantRepository.findByHearingId(hearingRowId)).hasSize(2);
+        assertThat(defendantRepository.findByHearingId(hearingId)).hasSize(2);
     }
 
     private UUID aSavedHearing() {
         hearingRepository.save(HearingEntity.builder()
-                .id(HEARING_ROW_ID)
                 .hearingId(HEARING_ID)
                 .hearingDay(LocalDate.of(2026, 9, 2))
                 .createdAt(OffsetDateTime.now(ZoneOffset.UTC))
                 .build());
-        return HEARING_ROW_ID;
+        return HEARING_ID;
     }
 }

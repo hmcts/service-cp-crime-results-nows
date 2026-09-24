@@ -8,7 +8,6 @@ import tools.jackson.databind.ObjectMapper;
 import uk.gov.hmcts.cp.domain.HearingDetailsResponse.HearingDetail;
 import uk.gov.hmcts.cp.entities.DefendantEntity;
 import uk.gov.hmcts.cp.entities.DefendantSnapshotEntity;
-import uk.gov.hmcts.cp.entities.HearingEntity;
 import uk.gov.hmcts.cp.mappers.DefendantSnapshotContentMapper;
 import uk.gov.hmcts.cp.mappers.NowsRecordMapper;
 import uk.gov.hmcts.cp.repositories.DefendantCaseRepository;
@@ -41,16 +40,17 @@ public class NowsRecordService {
     @Transactional
     public void record(final UUID hearingId, final LocalDate hearingDay, final MergedDefendant defendant,
                         final HearingDetail hearing, final Set<MatchedEventType> eventTypes) {
-        final HearingEntity hearingRow = upsertHearing(hearingId, hearingDay);
-        final DefendantEntity defendantRow = upsertDefendant(hearingRow.getId(), defendant.masterDefendantId());
+        upsertHearing(hearingId, hearingDay);
+        final DefendantEntity defendantRow = upsertDefendant(hearingId, defendant.masterDefendantId());
         defendant.cases().forEach(link -> upsertDefendantCase(defendantRow.getId(), link));
         upsertSnapshot(defendantRow.getId(), hearingId, defendant, hearing);
         eventTypes.forEach(eventType -> upsertEvent(defendantRow.getId(), eventType));
     }
 
-    private HearingEntity upsertHearing(final UUID hearingId, final LocalDate hearingDay) {
-        return hearingRepository.findByHearingId(hearingId)
-                .orElseGet(() -> hearingRepository.save(recordMapper.toHearing(hearingId, hearingDay)));
+    private void upsertHearing(final UUID hearingId, final LocalDate hearingDay) {
+        if (!hearingRepository.existsById(hearingId)) {
+            hearingRepository.save(recordMapper.toHearing(hearingId, hearingDay));
+        }
     }
 
     private DefendantEntity upsertDefendant(final UUID hearingRowId, final String masterDefendantId) {
