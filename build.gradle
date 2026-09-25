@@ -5,7 +5,7 @@ plugins {
   id 'io.spring.dependency-management' version '1.1.7'
   id 'jacoco'
   id 'maven-publish'
-  id 'com.github.ben-manes.versions' version '0.61.0'
+  id 'com.github.ben-manes.versions' version '0.64.0'
   id 'org.cyclonedx.bom' version '3.4.1'
   id 'com.gorylenko.gradle-git-properties' version '4.0.1'
   id 'com.avast.gradle.docker-compose' version '0.17.21'
@@ -33,10 +33,10 @@ dependencies {
   implementation 'uk.gov.hmcts.cp:api-cp-crime-results-nows:1.0.0'
   implementation 'io.swagger.core.v3:swagger-annotations:2.2.55'
 
-  compileOnly 'org.projectlombok:lombok:1.18.46'
-  annotationProcessor 'org.projectlombok:lombok:1.18.46'
-  testCompileOnly 'org.projectlombok:lombok:1.18.46'
-  testAnnotationProcessor 'org.projectlombok:lombok:1.18.46'
+  compileOnly 'org.projectlombok:lombok:1.18.48'
+  annotationProcessor 'org.projectlombok:lombok:1.18.48'
+  testCompileOnly 'org.projectlombok:lombok:1.18.48'
+  testAnnotationProcessor 'org.projectlombok:lombok:1.18.48'
 
   // Spring boot core
   implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -53,7 +53,7 @@ dependencies {
 
   // Security: pin transitive tomcat-embed-core to patched version (CVE-2026-41293, -43512, et al.)
   // Brought in transitively via spring-boot-starter-web; >=11.0.0-M1,<11.0.22 are vulnerable
-  implementation 'org.apache.tomcat.embed:tomcat-embed-core:11.0.25'
+  implementation 'org.apache.tomcat.embed:tomcat-embed-core:11.0.26'
 
   // --- Hearing-detail resolution: Redis-first, REST fallback (ADR-001) ---
   implementation 'org.springframework.boot:spring-boot-starter-data-redis'
@@ -61,7 +61,7 @@ dependencies {
 
   // --- Service Bus consumer (ADR-001) — same versions as service-cp-crime-results-pcr ---
   implementation 'com.azure:azure-messaging-servicebus:7.17.20'
-  implementation 'com.azure:azure-identity:1.18.5'
+  implementation 'com.azure:azure-identity:1.18.6'
   implementation 'org.awaitility:awaitility:4.3.0'
 
   implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
