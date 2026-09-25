@@ -38,8 +38,8 @@ public class NowsRecordService {
     private final ObjectMapper objectMapper;
 
     @Transactional
-    public void record(final UUID hearingId, final LocalDate hearingDay, final MergedDefendant defendant,
-                        final HearingDetail hearing, final Set<MatchedEventType> eventTypes) {
+    public void recordResult(final UUID hearingId, final LocalDate hearingDay, final MergedDefendant defendant,
+                              final HearingDetail hearing, final Set<MatchedEventType> eventTypes) {
         upsertHearing(hearingId, hearingDay);
         final DefendantEntity defendantRow = upsertDefendant(hearingId, defendant.masterDefendantId());
         defendant.cases().forEach(link -> upsertDefendantCase(defendantRow.getId(), link));

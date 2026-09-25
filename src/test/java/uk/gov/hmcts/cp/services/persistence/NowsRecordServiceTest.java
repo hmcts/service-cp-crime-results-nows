@@ -81,7 +81,7 @@ class NowsRecordServiceTest {
         when(recordMapper.toEvent(eq(DEFENDANT_ROW_ID), eq(EVENT_TYPE), any()))
                 .thenReturn(EventEntity.builder().build());
 
-        recordService.record(HEARING_ID, HEARING_DAY, mergedDefendant(), HearingDetail.builder().build(),
+        recordService.recordResult(HEARING_ID, HEARING_DAY, mergedDefendant(), HearingDetail.builder().build(),
                 Set.of(new MatchedEventType(EVENT_TYPE, Set.of("rt-1"))));
 
         verify(hearingRepository).save(any(HearingEntity.class));
@@ -101,7 +101,7 @@ class NowsRecordServiceTest {
         when(eventRepository.findByDefendantRowIdAndEventType(DEFENDANT_ROW_ID, EVENT_TYPE))
                 .thenReturn(Optional.of(EventEntity.builder().build()));
 
-        recordService.record(HEARING_ID, HEARING_DAY, mergedDefendant(), HearingDetail.builder().build(),
+        recordService.recordResult(HEARING_ID, HEARING_DAY, mergedDefendant(), HearingDetail.builder().build(),
                 Set.of(new MatchedEventType(EVENT_TYPE, Set.of("rt-1"))));
 
         verify(hearingRepository, never()).save(any());
@@ -120,7 +120,7 @@ class NowsRecordServiceTest {
         when(recordMapper.withRefreshedContent(eq(existing), any()))
                 .thenReturn(DefendantSnapshotEntity.builder().build());
 
-        recordService.record(HEARING_ID, HEARING_DAY, mergedDefendant(), HearingDetail.builder().build(), Set.of());
+        recordService.recordResult(HEARING_ID, HEARING_DAY, mergedDefendant(), HearingDetail.builder().build(), Set.of());
 
         verify(defendantSnapshotRepository).save(any(DefendantSnapshotEntity.class));
     }

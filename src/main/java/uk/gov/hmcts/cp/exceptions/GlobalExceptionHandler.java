@@ -24,6 +24,8 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    private static final String NOT_FOUND = "NOT_FOUND";
+
     private final Tracer tracer;
     private final ClockService clockService;
 
@@ -43,7 +45,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleEntityNotFound(final EntityNotFoundException e) {
         log.warn("GlobalExceptionHandler handleEntityNotFound: {}", e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(buildErrorResponse(e.getMessage(), "NOT_FOUND", null));
+                .body(buildErrorResponse(e.getMessage(), NOT_FOUND, null));
     }
 
     @ExceptionHandler(IncompleteHearingDetailsException.class)
@@ -80,14 +82,14 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleNoResourceFound(final NoResourceFoundException e) {
         log.warn("GlobalExceptionHandler handleNoResourceFound: {}", e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(buildErrorResponse(e.getMessage(), "NOT_FOUND", null));
+                .body(buildErrorResponse(e.getMessage(), NOT_FOUND, null));
     }
 
     @ExceptionHandler(NoHandlerFoundException.class)
     public ResponseEntity<ErrorResponse> handleNoHandlerFound(final NoHandlerFoundException e) {
         log.warn("GlobalExceptionHandler handleNoHandlerFound: {}", e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(buildErrorResponse(e.getMessage(), "NOT_FOUND", null));
+                .body(buildErrorResponse(e.getMessage(), NOT_FOUND, null));
     }
 
     @ExceptionHandler(Exception.class)

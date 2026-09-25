@@ -57,7 +57,7 @@ public class NowsIngestionService {
         final Set<MatchedEventType> eligibleEventTypes = decisionEngine.determineEligibleEventTypes(defendant, hearing);
         log.info("NOW generation gate evaluated for hearingId:{} — eligibleEventTypes:{}",
                 hearingId, eligibleEventTypes.stream().map(MatchedEventType::eventType).toList());
-        recordService.record(hearingId, hearingDay, defendant, hearing, eligibleEventTypes);
+        recordService.recordResult(hearingId, hearingDay, defendant, hearing, eligibleEventTypes);
     }
 
     private HearingDetailsResponse deserializeCachedHearingResults(final String cachedJson) {

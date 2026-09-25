@@ -80,7 +80,7 @@ class NowsRecordAndQueryIntegrationTest {
 
     @Test
     void getDefendantResult_should_returnContentFilteredToMatchedResults() throws Exception {
-        recordService.record(HEARING_ID, HEARING_DAY, mergedDefendant(), hearing(), matchedRemand());
+        recordService.recordResult(HEARING_ID, HEARING_DAY, mergedDefendant(), hearing(), matchedRemand());
 
         mockMvc.perform(get("/cases/{caseURN}/hearings/{hearingId}/defendants/{defendantId}",
                         CASE_URN, HEARING_ID, DEFENDANT_ID))
@@ -106,7 +106,7 @@ class NowsRecordAndQueryIntegrationTest {
 
     @Test
     void getDefendantResult_should_returnEmptyEventTypes_whenNothingMatchedForAKnownDefendant() throws Exception {
-        recordService.record(HEARING_ID, HEARING_DAY, mergedDefendant(), hearing(), Set.of());
+        recordService.recordResult(HEARING_ID, HEARING_DAY, mergedDefendant(), hearing(), Set.of());
 
         mockMvc.perform(get("/cases/{caseURN}/hearings/{hearingId}/defendants/{defendantId}",
                         CASE_URN, HEARING_ID, DEFENDANT_ID))
@@ -116,7 +116,7 @@ class NowsRecordAndQueryIntegrationTest {
 
     @Test
     void getDefendantResult_should_narrowToRequestedEventType_whenEventTypeFilterSupplied() throws Exception {
-        recordService.record(HEARING_ID, HEARING_DAY, mergedDefendant(), hearing(), matchedRemand());
+        recordService.recordResult(HEARING_ID, HEARING_DAY, mergedDefendant(), hearing(), matchedRemand());
 
         mockMvc.perform(get("/cases/{caseURN}/hearings/{hearingId}/defendants/{defendantId}",
                         CASE_URN, HEARING_ID, DEFENDANT_ID)
@@ -127,8 +127,8 @@ class NowsRecordAndQueryIntegrationTest {
 
     @Test
     void getDefendantResult_should_returnSingleEventType_whenSameHearingRecordedTwice() throws Exception {
-        recordService.record(HEARING_ID, HEARING_DAY, mergedDefendant(), hearing(), matchedRemand());
-        recordService.record(HEARING_ID, HEARING_DAY, mergedDefendant(), hearing(), matchedRemand());
+        recordService.recordResult(HEARING_ID, HEARING_DAY, mergedDefendant(), hearing(), matchedRemand());
+        recordService.recordResult(HEARING_ID, HEARING_DAY, mergedDefendant(), hearing(), matchedRemand());
 
         mockMvc.perform(get("/cases/{caseURN}/hearings/{hearingId}/defendants/{defendantId}",
                         CASE_URN, HEARING_ID, DEFENDANT_ID))
@@ -145,7 +145,7 @@ class NowsRecordAndQueryIntegrationTest {
 
     @Test
     void getDefendantResult_should_return404_whenDefendantUnknownOnAKnownHearing() throws Exception {
-        recordService.record(HEARING_ID, HEARING_DAY, mergedDefendant(), hearing(), matchedRemand());
+        recordService.recordResult(HEARING_ID, HEARING_DAY, mergedDefendant(), hearing(), matchedRemand());
 
         mockMvc.perform(get("/cases/{caseURN}/hearings/{hearingId}/defendants/{defendantId}",
                         CASE_URN, HEARING_ID, UNKNOWN_ID))
