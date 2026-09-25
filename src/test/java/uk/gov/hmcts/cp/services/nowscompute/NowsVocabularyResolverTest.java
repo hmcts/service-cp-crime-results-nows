@@ -81,8 +81,7 @@ class NowsVocabularyResolverTest {
 
     @Test
     void resolve_should_setCpsProsecuted_fromMergedDefendant() {
-        final MergedDefendant defendant = new MergedDefendant(
-                "master-1", false, true, null, List.of(DEFENDANT_ID), List.of());
+        final MergedDefendant defendant = defendantBuilder().cpsProsecuted(true).build();
 
         final NowsVocabulary vocabulary = resolver.resolve(defendant, HearingDetail.builder().build());
 
@@ -91,8 +90,7 @@ class NowsVocabularyResolverTest {
 
     @Test
     void resolve_should_setYouthDefendant_fromMergedDefendant() {
-        final MergedDefendant defendant = new MergedDefendant(
-                "master-1", true, false, null, List.of(DEFENDANT_ID), List.of());
+        final MergedDefendant defendant = defendantBuilder().isYouth(true).build();
 
         final NowsVocabulary vocabulary = resolver.resolve(defendant, HearingDetail.builder().build());
 
@@ -175,11 +173,19 @@ class NowsVocabularyResolverTest {
     }
 
     private MergedDefendant defendantWithCustody(final String custody) {
-        return new MergedDefendant("master-1", false, false, custody, List.of(DEFENDANT_ID), List.of());
+        return defendantBuilder().custody(custody).build();
     }
 
     private MergedDefendant defendantWithResults(final List<JudicialResult> results) {
-        return new MergedDefendant("master-1", false, false, null, List.of(DEFENDANT_ID), results);
+        return defendantBuilder().results(results).build();
+    }
+
+    private MergedDefendant.MergedDefendantBuilder defendantBuilder() {
+        return MergedDefendant.builder()
+                .masterDefendantId("master-1")
+                .cases(List.of(new DefendantCaseLink("RC363968376", DEFENDANT_ID)))
+                .offences(List.of())
+                .results(List.of());
     }
 
     private JudicialResult resultWithPrompt(final String promptReference) {

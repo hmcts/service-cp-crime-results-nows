@@ -13,6 +13,7 @@ class NowsMetadataMatcherTest {
 
     private static final String MASTER_DEFENDANT_ID = "master-1";
     private static final String DEFENDANT_ID = "d-1";
+    private static final String CASE_URN = "RC363968376";
 
     private final NowsMetadataMatcher matcher = new NowsMetadataMatcher();
 
@@ -164,7 +165,12 @@ class NowsMetadataMatcherTest {
     }
 
     private MergedDefendant defendantWithResults(final List<JudicialResult> results) {
-        return new MergedDefendant(MASTER_DEFENDANT_ID, false, false, null, List.of(DEFENDANT_ID), results);
+        return MergedDefendant.builder()
+                .masterDefendantId(MASTER_DEFENDANT_ID)
+                .cases(List.of(new DefendantCaseLink(CASE_URN, DEFENDANT_ID)))
+                .offences(List.of())
+                .results(results)
+                .build();
     }
 
     private JudicialResult resultWithId(final String judicialResultTypeId) {

@@ -17,6 +17,7 @@ class NowsSubscriptionMatcherTest {
 
     private static final String MASTER_DEFENDANT_ID = "master-1";
     private static final String DEFENDANT_ID = "d-1";
+    private static final String CASE_URN = "RC363968376";
     private static final String RESULT_TYPE_ID = "rt-1";
 
     private final NowsSubscriptionMatcher matcher = new NowsSubscriptionMatcher();
@@ -248,8 +249,7 @@ class NowsSubscriptionMatcherTest {
                 .judicialResultTypeId(RESULT_TYPE_ID)
                 .judicialResultPrompts(List.of(JudicialResultPrompt.builder().promptReference("prisonOrganisationName").build()))
                 .build();
-        final MergedDefendant defendant = new MergedDefendant(
-                MASTER_DEFENDANT_ID, false, false, null, List.of(DEFENDANT_ID), List.of(matchedResult));
+        final MergedDefendant defendant = defendantWithResults(List.of(matchedResult));
 
         final boolean result = matcher.matches(subscriptionWithRules(rules), emptyVocabulary(), defendant, Set.of(RESULT_TYPE_ID));
 
@@ -262,8 +262,7 @@ class NowsSubscriptionMatcherTest {
                 .includedPrompts(List.of(ResultPrompt.builder().resultPromptReference("prisonOrganisationName").build()))
                 .build();
         final JudicialResult matchedResult = JudicialResult.builder().judicialResultTypeId(RESULT_TYPE_ID).build();
-        final MergedDefendant defendant = new MergedDefendant(
-                MASTER_DEFENDANT_ID, false, false, null, List.of(DEFENDANT_ID), List.of(matchedResult));
+        final MergedDefendant defendant = defendantWithResults(List.of(matchedResult));
 
         final boolean result = matcher.matches(subscriptionWithRules(rules), emptyVocabulary(), defendant, Set.of(RESULT_TYPE_ID));
 
@@ -279,8 +278,7 @@ class NowsSubscriptionMatcherTest {
                 .judicialResultTypeId(RESULT_TYPE_ID)
                 .judicialResultPrompts(List.of(JudicialResultPrompt.builder().promptReference("bannedPrompt").build()))
                 .build();
-        final MergedDefendant defendant = new MergedDefendant(
-                MASTER_DEFENDANT_ID, false, false, null, List.of(DEFENDANT_ID), List.of(matchedResult));
+        final MergedDefendant defendant = defendantWithResults(List.of(matchedResult));
 
         final boolean result = matcher.matches(subscriptionWithRules(rules), emptyVocabulary(), defendant, Set.of(RESULT_TYPE_ID));
 
@@ -352,6 +350,15 @@ class NowsSubscriptionMatcherTest {
     }
 
     private MergedDefendant defendant() {
-        return new MergedDefendant(MASTER_DEFENDANT_ID, false, false, null, List.of(DEFENDANT_ID), List.of());
+        return defendantWithResults(List.of());
+    }
+
+    private MergedDefendant defendantWithResults(final List<JudicialResult> results) {
+        return MergedDefendant.builder()
+                .masterDefendantId(MASTER_DEFENDANT_ID)
+                .cases(List.of(new DefendantCaseLink(CASE_URN, DEFENDANT_ID)))
+                .offences(List.of())
+                .results(results)
+                .build();
     }
 }
