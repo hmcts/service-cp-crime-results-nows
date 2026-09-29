@@ -95,7 +95,7 @@ public class NowsDecisionEngine {
     private LocalDate parseSittingDayOrToday(final String sittingDay) {
         LocalDate activeAt;
         try {
-            activeAt = LocalDate.parse(sittingDay);
+            activeAt = LocalDate.parse(sittingDay, HearingDay.SITTING_DAY_FORMAT);
         } catch (DateTimeParseException e) {
             log.warn("activeAt could not parse hearingDays[0].sittingDay:{} — falling back to today", sittingDay);
             activeAt = clockService.today();

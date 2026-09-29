@@ -30,7 +30,7 @@ dependencies {
   // Java core
   implementation 'net.logstash.logback:logstash-logback-encoder:9.0'
 
-  implementation 'uk.gov.hmcts.cp:api-cp-crime-results-nows:1.0.0'
+  implementation 'uk.gov.hmcts.cp:api-cp-crime-results-nows:1.1.0-SNAPSHOT'
   implementation 'io.swagger.core.v3:swagger-annotations:2.2.55'
 
   compileOnly 'org.projectlombok:lombok:1.18.46'

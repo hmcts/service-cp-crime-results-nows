@@ -24,9 +24,10 @@ public class NowMetadataResponse {
     @Getter
     public static class NowDefinition {
         private String id;
-        // Matched against the fixed, static allow-list (design doc §3e) before any requirement-tree
-        // matching runs.
         private String name;
+        // The NOW event type (e.g. WEE_CustodialSentence) — matched against the fixed, static
+        // allow-list (design doc §3e); `name` is only the display name.
+        private String templateName;
         private Boolean includeAllResults;
         // Template-wide static text — nt.value('key') resolves against this list, keyed by
         // nowReference.

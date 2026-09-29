@@ -69,6 +69,7 @@ class DefendantMergerTest {
 
         assertThat(merged).hasSize(1);
         assertThat(merged.get(0).results()).containsExactly(offenceResult);
+        assertThat(merged.get(0).defendantResults()).isEmpty();
     }
 
     @Test
@@ -136,6 +137,7 @@ class DefendantMergerTest {
 
         assertThat(merged).hasSize(1);
         assertThat(merged.get(0).results()).containsExactlyInAnyOrder(caseResult, applicationResult);
+        assertThat(merged.get(0).defendantResults()).containsExactlyInAnyOrder(caseResult, applicationResult);
     }
 
     @Test
@@ -185,6 +187,7 @@ class DefendantMergerTest {
 
         assertThat(merged).hasSize(1);
         assertThat(merged.get(0).results()).containsExactlyInAnyOrder(caseResult, hearingWideResult);
+        assertThat(merged.get(0).defendantResults()).containsExactlyInAnyOrder(caseResult, hearingWideResult);
     }
 
     @Test

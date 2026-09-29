@@ -43,6 +43,7 @@ class NowsQueryMapperTest {
                 {
                   "code": "TH68013A", "title": "Attempt theft of motor vehicle",
                   "wording": "Attempt theft to vehicle", "convictionDate": "2026-09-02",
+                  "legislation": "Contrary to section 1(1) of the Criminal Attempts Act 1981.",
                   "results": [
                     {
                       "judicialResultTypeId": "3f8e2a10-9c44-4b6a-8f01-2b7d9e5a6c11",
@@ -65,6 +66,19 @@ class NowsQueryMapperTest {
                       "cjsCode": "OTHER", "label": "Unrelated result", "prompts": []
                     }
                   ]
+                }
+              ],
+              "defendantResults": [
+                {
+                  "judicialResultTypeId": "3f8e2a10-9c44-4b6a-8f01-2b7d9e5a6c11",
+                  "label": "Risk or vulnerability factors", "orderedDate": "2026-09-02",
+                  "prompts": [
+                    { "promptReference": "riskOrVulnerabilityFactors", "label": "Risk or vulnerability factors", "value": "RiskFactor" }
+                  ]
+                },
+                {
+                  "judicialResultTypeId": "9a1b2c3d-4e5f-6071-8293-a4b5c6d7e8f9",
+                  "label": "Unrelated result", "prompts": []
                 }
               ]
             }
@@ -106,6 +120,23 @@ class NowsQueryMapperTest {
                 .isEqualTo(UUID.fromString(MATCHED_RESULT_TYPE_ID));
         assertThat(result.getEventTypes().get(0).getOffences().get(0).getResults().get(0).getPrompts().get(0)
                 .getPromptReference()).isEqualTo("prisonOrganisationName");
+        assertThat(result.getEventTypes().get(0).getOffences().get(0).getLegislation())
+                .isEqualTo("Contrary to section 1(1) of the Criminal Attempts Act 1981.");
+        assertThat(result.getEventTypes().get(0).getDefendantResults()).hasSize(1);
+        assertThat(result.getEventTypes().get(0).getDefendantResults().get(0).getPrompts().get(0)
+                .getPromptReference()).isEqualTo("riskOrVulnerabilityFactors");
+    }
+
+    @Test
+    void toDefendantResult_should_returnEmptyDefendantResults_whenSnapshotHasNone() {
+        final String contentWithoutDefendantResults = """
+                { "hearing": { "id": "6988027f-e786-49f4-a00f-7c35ab459464" }, "offences": [] }
+                """;
+
+        final DefendantResult result = mapper.toDefendantResult(CASE_URN, DEFENDANT_ID, contentWithoutDefendantResults,
+                List.of(event(MATCHED_RESULT_TYPE_ID)));
+
+        assertThat(result.getEventTypes().get(0).getDefendantResults()).isEmpty();
     }
 
     @Test

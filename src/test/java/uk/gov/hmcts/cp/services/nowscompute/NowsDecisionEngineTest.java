@@ -76,7 +76,7 @@ class NowsDecisionEngineTest {
         final HearingDetail hearing = hearingSittingOn(SITTING_DAY);
         final NowDefinition unregisteredDefinition = NowDefinition.builder()
                 .id("def-2")
-                .name("WEE_CustodialSentence")
+                .templateName("WEE_NotRegistered")
                 .includeAllResults(false)
                 .nowRequirements(List.of(NowRequirement.builder()
                         .resultDefinitionId(REMAND_RESULT_TYPE_ID)
@@ -105,6 +105,21 @@ class NowsDecisionEngineTest {
         final Set<MatchedEventType> result = decisionEngine.determineEligibleEventTypes(defendant, hearing);
 
         assertThat(result).isEmpty();
+    }
+
+    @Test
+    void determineEligibleEventTypes_should_useSittingDate_whenSittingDayIsADateTime() {
+        final MergedDefendant defendant = remandDefendant();
+        final HearingDetail hearing = HearingDetail.builder()
+                .hearingDays(List.of(HearingDay.builder().sittingDay(SITTING_DAY + "T10:30:00.000Z").build()))
+                .build();
+        when(nowsMetadataClient.getNowDefinitions(SITTING_DAY)).thenReturn(List.of(weeRemandDefinition()));
+        when(nowsSubscriptionsClient.getNowSubscriptions(SITTING_DAY))
+                .thenReturn(List.of(unconditionalSubscription()));
+
+        final Set<MatchedEventType> result = decisionEngine.determineEligibleEventTypes(defendant, hearing);
+
+        assertThat(result).extracting(MatchedEventType::eventType).containsExactly("WEE_Remand");
     }
 
     @Test
@@ -141,7 +156,7 @@ class NowsDecisionEngineTest {
     private NowDefinition weeRemandDefinition() {
         return NowDefinition.builder()
                 .id("def-1")
-                .name("WEE_Remand")
+                .templateName("WEE_Remand")
                 .includeAllResults(false)
                 .nowRequirements(List.of(NowRequirement.builder()
                         .resultDefinitionId(REMAND_RESULT_TYPE_ID)

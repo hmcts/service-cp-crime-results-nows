@@ -1,0 +1,192 @@
+{
+  "caseURN": "JG362234365",
+  "defendant": {
+    "address": {
+      "address1": "15 Station Road",
+      "address2": "Station Road",
+      "address3": "Manchester",
+      "address4": "Greater Manchester",
+      "address5": null,
+      "postCode": "NW1 5BR"
+    },
+    "dateOfBirth": "1996-09-02",
+    "firstName": "Yer",
+    "gender": "MALE",
+    "id": "e934a152-985e-4f91-a853-ed822e899d46",
+    "lastName": "Muller",
+    "middleName": null,
+    "nationality": null,
+    "title": "Mr"
+  },
+  "eventTypes": [
+    {
+      "defendantResults": [
+        {
+          "cjsCode": null,
+          "judicialResultTypeId": "6cb15971-c945-4398-b7c9-3f8b743a4de3",
+          "label": "Total custodial period",
+          "orderedDate": "2026-09-02",
+          "prompts": [
+            {
+              "label": "Total custodial period is life",
+              "promptReference": "totalCustodialPeriodIsLife",
+              "value": "true"
+            },
+            {
+              "label": "Prison organisation name",
+              "promptReference": "prisonOrganisationName",
+              "value": "HMP/YOI Low Newton"
+            },
+            {
+              "label": "Prison email address 1",
+              "promptReference": "prisonEmailAddress1",
+              "value": "OMU.LowNewton@example-prison.gov.uk"
+            },
+            {
+              "label": "Prison email address 2",
+              "promptReference": "prisonEmailAddress2",
+              "value": "Reception.LowNewton@example-prison.gov.uk"
+            },
+            {
+              "label": "Conveyor / custodian name organisation name",
+              "promptReference": "conveyorcustodiannameOrganisationName",
+              "value": "North East Division NPS"
+            },
+            {
+              "label": "Conveyor / custodian name email address 1",
+              "promptReference": "conveyorcustodiannameEmailAddress1",
+              "value": "nenps.court@example-probation.gov.uk"
+            },
+            {
+              "label": "Probation team to be notified organisation name",
+              "promptReference": "probationteamtobenotifiedOrganisationName",
+              "value": "South West and Central Division NPS"
+            },
+            {
+              "label": "Probation team to be notified email address 1",
+              "promptReference": "probationteamtobenotifiedEmailAddress1",
+              "value": "SWSCNPS.Court@example-probation.gov.uk"
+            }
+          ]
+        },
+        {
+          "cjsCode": null,
+          "judicialResultTypeId": "66105417-41c8-420d-820f-40b61b507442",
+          "label": "Risk or vulnerability factors",
+          "orderedDate": "2026-09-02",
+          "prompts": [
+            {
+              "label": "Risk or vulnerability factors",
+              "promptReference": "riskOrVulnerabilityFactors",
+              "value": "RiskFactor"
+            }
+          ]
+        }
+      ],
+      "eventType": "WEE_CustodialSentence",
+      "matchedAt": "2026-09-02T18:05:00Z",
+      "offences": [
+        {
+          "code": "TH68013A",
+          "convictionDate": "2026-09-02",
+          "legislation": "Contrary to section 1(1)    of the Criminal Attempts Act 1981.",
+          "results": [
+            {
+              "cjsCode": "1002",
+              "judicialResultTypeId": "abb95a52-2a75-40c3-8d3f-a1d75a199c47",
+              "label": "Imprisonment",
+              "orderedDate": "2026-09-02",
+              "prompts": [
+                {
+                  "label": "Total custodial period is life",
+                  "promptReference": "totalCustodialPeriodIsLife",
+                  "value": "true"
+                },
+                {
+                  "label": "Prison organisation name",
+                  "promptReference": "prisonOrganisationName",
+                  "value": "HMP/YOI Low Newton"
+                },
+                {
+                  "label": "Prison email address 1",
+                  "promptReference": "prisonEmailAddress1",
+                  "value": "OMU.LowNewton@example-prison.gov.uk"
+                },
+                {
+                  "label": "Prison email address 2",
+                  "promptReference": "prisonEmailAddress2",
+                  "value": "Reception.LowNewton@example-prison.gov.uk"
+                },
+                {
+                  "label": "Conveyor / custodian name organisation name",
+                  "promptReference": "conveyorcustodiannameOrganisationName",
+                  "value": "North East Division NPS"
+                },
+                {
+                  "label": "Conveyor / custodian name email address 1",
+                  "promptReference": "conveyorcustodiannameEmailAddress1",
+                  "value": "nenps.court@example-probation.gov.uk"
+                },
+                {
+                  "label": "Probation team to be notified organisation name",
+                  "promptReference": "probationteamtobenotifiedOrganisationName",
+                  "value": "South West and Central Division NPS"
+                },
+                {
+                  "label": "Probation team to be notified email address 1",
+                  "promptReference": "probationteamtobenotifiedEmailAddress1",
+                  "value": "SWSCNPS.Court@example-probation.gov.uk"
+                },
+                {
+                  "label": "Imprisonment Period",
+                  "promptReference": "imprisonmentPeriod",
+                  "value": "1 Years 2 Months 3 Weeks 6 Days"
+                },
+                {
+                  "label": "Imprisonment reasons",
+                  "promptReference": "imprisonmentReasons",
+                  "value": "the offence(s) are so serious that only a custodial sentence can be justified"
+                },
+                {
+                  "label": "Reason for custody",
+                  "promptReference": "theReasonsForThis",
+                  "value": "because of an unprovoked attack of a serious nature"
+                },
+                {
+                  "label": "Bail remand days to count (tagged days)",
+                  "promptReference": "bailRemandDaysToCountTaggedDays",
+                  "value": "0"
+                },
+                {
+                  "label": "This offence is aggravated by the foreign power condition being met in relation to it as defined by section 31 of the National Security Act 2023",
+                  "promptReference": "offenceAggByForeignPowerCondition",
+                  "value": "true"
+                },
+                {
+                  "label": "Risk or vulnerability factors",
+                  "promptReference": "46bdac06-f836-4c0c-a319-d6fcc4d836d6",
+                  "value": "Risk or vulnerability factors:RiskFactor"
+                }
+              ]
+            }
+          ],
+          "title": "Attempt theft of motor vehicle",
+          "wording": "Attempt theft to vehicle"
+        }
+      ],
+      "orderName": null
+    }
+  ],
+  "hearing": {
+    "courtDetails": {
+      "court": {
+        "courtHouseCode": "B01DU00",
+        "courtHouseName": "City of London Magistrates' Court"
+      },
+      "ljaName": "Central London Magistrates' Court"
+    },
+    "hearingDate": "2026-09-02",
+    "id": "4229120b-b9d4-4562-9a64-9f9835a4ede7",
+    "jurisdiction": "MAGISTRATES"
+  }
+}

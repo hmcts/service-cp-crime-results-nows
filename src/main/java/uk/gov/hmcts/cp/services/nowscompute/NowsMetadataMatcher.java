@@ -16,12 +16,12 @@ public class NowsMetadataMatcher {
     public List<MatchedEventType> match(final MergedDefendant defendant, final List<NowDefinition> definitions) {
         final List<MatchedEventType> matches = new ArrayList<>();
         for (final NowDefinition definition : definitions) {
-            if (!RegisteredNowEventTypes.ALLOW_LIST.contains(definition.getName())) {
+            if (!RegisteredNowEventTypes.ALLOW_LIST.contains(definition.getTemplateName())) {
                 continue;
             }
             final Set<String> matchedResultTypeIds = matchedResultTypeIds(defendant, definition);
             if (!matchedResultTypeIds.isEmpty()) {
-                matches.add(new MatchedEventType(definition.getName(), matchedResultTypeIds));
+                matches.add(new MatchedEventType(definition.getTemplateName(), matchedResultTypeIds));
             }
         }
         return matches;

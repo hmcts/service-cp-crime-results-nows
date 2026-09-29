@@ -12,7 +12,8 @@ import java.util.UUID;
 public record DefendantSnapshotContent(
         SnapshotDefendant defendant,
         SnapshotHearing hearing,
-        List<SnapshotOffence> offences) {
+        List<SnapshotOffence> offences,
+        List<SnapshotResult> defendantResults) {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     @Builder
@@ -55,6 +56,7 @@ public record DefendantSnapshotContent(
             String code,
             String title,
             String wording,
+            String legislation,
             LocalDate convictionDate,
             List<SnapshotResult> results) {
     }

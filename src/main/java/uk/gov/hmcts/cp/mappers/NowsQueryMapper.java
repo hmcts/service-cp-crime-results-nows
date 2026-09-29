@@ -42,7 +42,7 @@ public class NowsQueryMapper {
                 .caseURN(caseUrn)
                 .defendant(toDefendant(defendantId, snapshot.defendant()))
                 .hearing(toHearingSummary(snapshot.hearing()))
-                .eventTypes(events.stream().map(event -> toEventType(event, snapshot.offences())).toList())
+                .eventTypes(events.stream().map(event -> toEventType(event, snapshot)).toList())
                 .build();
     }
 
@@ -86,13 +86,14 @@ public class NowsQueryMapper {
                 .build();
     }
 
-    private EventType toEventType(final EventEntity event, final List<SnapshotOffence> offences) {
+    private EventType toEventType(final EventEntity event, final DefendantSnapshotContent snapshot) {
         final Set<String> matchedResultTypeIds =
                 objectMapper.readValue(event.getMatchedResultTypeIds(), RESULT_TYPE_IDS);
         return EventType.builder()
                 .eventType(event.getEventType())
                 .matchedAt(event.getMatchedAt() == null ? null : event.getMatchedAt().toInstant())
-                .offences(filterOffences(offences, matchedResultTypeIds))
+                .offences(filterOffences(snapshot.offences(), matchedResultTypeIds))
+                .defendantResults(matchedResults(snapshot.defendantResults(), matchedResultTypeIds))
                 .build();
     }
 
@@ -104,17 +105,23 @@ public class NowsQueryMapper {
     }
 
     private Offence toOffence(final SnapshotOffence offence, final Set<String> matchedResultTypeIds) {
-        final List<SnapshotResult> results = offence.results() == null ? List.of() : offence.results();
         return Offence.builder()
                 .code(offence.code())
                 .title(offence.title())
                 .wording(offence.wording())
+                .legislation(offence.legislation())
                 .convictionDate(offence.convictionDate())
-                .results(results.stream()
-                        .filter(result -> matchedResultTypeIds.contains(result.judicialResultTypeId()))
-                        .map(this::toJudicialResult)
-                        .toList())
+                .results(matchedResults(offence.results(), matchedResultTypeIds))
                 .build();
+    }
+
+    // Null for a snapshot recorded before the field existed.
+    private List<JudicialResult> matchedResults(final List<SnapshotResult> results,
+                                                 final Set<String> matchedResultTypeIds) {
+        return results == null ? List.of() : results.stream()
+                .filter(result -> matchedResultTypeIds.contains(result.judicialResultTypeId()))
+                .map(this::toJudicialResult)
+                .toList();
     }
 
     private JudicialResult toJudicialResult(final SnapshotResult result) {

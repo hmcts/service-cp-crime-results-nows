@@ -179,6 +179,7 @@ class NowsRecordAndQueryIntegrationTest {
                 .cases(List.of(new DefendantCaseLink(CASE_URN, DEFENDANT_ID.toString())))
                 .offences(List.of(offence()))
                 .results(List.of(remandResult(), unrelatedResult()))
+                .defendantResults(List.of())
                 .build();
     }
 

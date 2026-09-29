@@ -2,7 +2,8 @@
   "nows": [
     {
       "id": "now-def-006",
-      "name": "WEE_CustodialSentence",
+      "name": "Warrant for Custodial Sentence",
+      "templateName": "WEE_CustodialSentence",
       "includeAllResults": false,
       "nowTextList": [
         { "nowReference": "orderText", "text": "This warrant authorises...", "welshText": null }

@@ -54,7 +54,7 @@ public class DefendantMerger {
             acc.custody = defendant.getPersonDefendant().getCustodialEstablishment().getCustody();
         }
         acc.cases.add(new DefendantCaseLink(caseUrn, defendant.getId()));
-        acc.results.addAll(nullSafe(defendant.getDefendantCaseJudicialResults()));
+        acc.addDefendantResults(nullSafe(defendant.getDefendantCaseJudicialResults()));
         for (final Offence offence : nullSafe(defendant.getOffences())) {
             acc.offences.add(offence);
             acc.results.addAll(nullSafe(offence.getJudicialResults()));
@@ -74,7 +74,7 @@ public class DefendantMerger {
                 continue;
             }
             final Accumulator acc = byMasterDefendantId.computeIfAbsent(masterDefendantId, Accumulator::new);
-            acc.results.addAll(nullSafe(courtApplication.getJudicialResults()));
+            acc.addDefendantResults(nullSafe(courtApplication.getJudicialResults()));
         }
     }
 
@@ -87,7 +87,7 @@ public class DefendantMerger {
             }
             final Accumulator acc = byMasterDefendantId.computeIfAbsent(masterDefendantId, Accumulator::new);
             if (defendantJudicialResult.getJudicialResult() != null) {
-                acc.results.add(defendantJudicialResult.getJudicialResult());
+                acc.addDefendantResults(List.of(defendantJudicialResult.getJudicialResult()));
             }
         }
     }
@@ -111,9 +111,15 @@ public class DefendantMerger {
         private final List<DefendantCaseLink> cases = new ArrayList<>();
         private final List<Offence> offences = new ArrayList<>();
         private final List<JudicialResult> results = new ArrayList<>();
+        private final List<JudicialResult> defendantResults = new ArrayList<>();
 
         private Accumulator(final String masterDefendantId) {
             this.masterDefendantId = masterDefendantId;
+        }
+
+        private void addDefendantResults(final List<JudicialResult> notOffenceLevel) {
+            results.addAll(notOffenceLevel);
+            defendantResults.addAll(notOffenceLevel);
         }
 
         private MergedDefendant toMergedDefendant() {
@@ -126,6 +132,7 @@ public class DefendantMerger {
                     .cases(cases)
                     .offences(offences)
                     .results(results)
+                    .defendantResults(defendantResults)
                     .build();
         }
     }
