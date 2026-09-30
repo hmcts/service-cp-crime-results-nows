@@ -62,7 +62,7 @@ public class NowsDecisionEngine {
         for (final MatchedEventType candidate : candidates) {
             final boolean anySubscriptionMatches = nowSubscriptions.stream()
                     .anyMatch(subscription -> nowsSubscriptionMatcher.matches(
-                            subscription, vocabulary, defendant, candidate.matchedResultTypeIds()));
+                            subscription, vocabulary, defendant, candidate.nowId(), candidate.matchedResultTypeIds()));
             if (anySubscriptionMatches) {
                 eligible.add(candidate);
             }
@@ -95,7 +95,7 @@ public class NowsDecisionEngine {
     private LocalDate parseSittingDayOrToday(final String sittingDay) {
         LocalDate activeAt;
         try {
-            activeAt = LocalDate.parse(sittingDay);
+            activeAt = LocalDate.parse(sittingDay, HearingDay.SITTING_DAY_FORMAT);
         } catch (DateTimeParseException e) {
             log.warn("activeAt could not parse hearingDays[0].sittingDay:{} — falling back to today", sittingDay);
             activeAt = clockService.today();

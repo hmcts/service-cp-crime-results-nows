@@ -1,0 +1,9 @@
+{
+  "nowSubscriptions": [
+    {
+      "isNowSubscription": true,
+      "isEDTSubscription": false,
+      "applySubscriptionRules": false
+    }
+  ]
+}

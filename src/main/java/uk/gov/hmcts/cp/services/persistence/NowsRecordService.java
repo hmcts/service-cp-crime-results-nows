@@ -84,6 +84,6 @@ public class NowsRecordService {
             return;
         }
         final String matchedResultTypeIds = objectMapper.writeValueAsString(eventType.matchedResultTypeIds());
-        eventRepository.save(recordMapper.toEvent(defendantRowId, eventType.eventType(), matchedResultTypeIds));
+        eventRepository.save(recordMapper.toEvent(defendantRowId, eventType, matchedResultTypeIds));
     }
 }

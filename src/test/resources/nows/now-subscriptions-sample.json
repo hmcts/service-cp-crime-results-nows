@@ -4,6 +4,8 @@
       "isNowSubscription": true,
       "isEDTSubscription": false,
       "applySubscriptionRules": true,
+      "includedNOWS": ["b4b55110-1d50-11e8-accf-0ed5f89f718b"],
+      "excludedNOWS": ["10115268-8efc-49fe-b8e8-feee216a03da"],
       "subscriptionVocabulary": {
         "anyAppearance": true,
         "anyMajorCreditor": true,

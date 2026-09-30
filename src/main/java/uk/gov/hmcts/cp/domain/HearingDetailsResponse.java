@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.List;
 
 // Same hearingDetails/internal contract service-cp-crime-results-pcr already consumes (ADR-001) —
@@ -120,6 +122,15 @@ public class HearingDetailsResponse {
     @NoArgsConstructor
     @Getter
     public static class HearingDay {
+        // The results payload sends an ISO date-time (e.g. 2026-09-02T10:30:00.000Z); a bare date is also accepted.
+        public static final DateTimeFormatter SITTING_DAY_FORMAT = new DateTimeFormatterBuilder()
+                .append(DateTimeFormatter.ISO_LOCAL_DATE)
+                .optionalStart()
+                .appendLiteral('T')
+                .append(DateTimeFormatter.ISO_OFFSET_TIME)
+                .optionalEnd()
+                .toFormatter();
+
         private String sittingDay;
     }
 

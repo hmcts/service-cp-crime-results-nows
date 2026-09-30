@@ -20,7 +20,7 @@ class NowsMetadataMatcherTest {
     @Test
     void match_should_pruneDefinition_whenNameNotInAllowList() {
         final NowDefinition definition = NowDefinition.builder()
-                .name("WEE_NotRegistered")
+                .templateName("WEE_NotRegistered")
                 .includeAllResults(true)
                 .build();
         final MergedDefendant defendant = defendantWithResults(List.of(resultWithId("rt-1")));
@@ -33,7 +33,7 @@ class NowsMetadataMatcherTest {
     @Test
     void match_should_includeEveryResult_whenIncludeAllResultsIsTrue() {
         final NowDefinition definition = NowDefinition.builder()
-                .name("WEE_Remand")
+                .templateName("WEE_Remand")
                 .includeAllResults(true)
                 .build();
         final MergedDefendant defendant = defendantWithResults(
@@ -53,7 +53,9 @@ class NowsMetadataMatcherTest {
                 .primary(true)
                 .build();
         final NowDefinition definition = NowDefinition.builder()
-                .name("WEE_Remand")
+                .id("b4b55110-1d50-11e8-accf-0ed5f89f718b")
+                .name("Remand Warrant")
+                .templateName("WEE_Remand")
                 .includeAllResults(false)
                 .nowRequirements(List.of(primaryRequirement))
                 .build();
@@ -62,6 +64,9 @@ class NowsMetadataMatcherTest {
         final List<MatchedEventType> matches = matcher.match(defendant, List.of(definition));
 
         assertThat(matches).hasSize(1);
+        assertThat(matches.get(0).eventType()).isEqualTo("WEE_Remand");
+        assertThat(matches.get(0).nowId()).isEqualTo("b4b55110-1d50-11e8-accf-0ed5f89f718b");
+        assertThat(matches.get(0).orderName()).isEqualTo("Remand Warrant");
         assertThat(matches.get(0).matchedResultTypeIds()).containsExactly("rt-1");
     }
 
@@ -72,7 +77,7 @@ class NowsMetadataMatcherTest {
                 .primary(true)
                 .build();
         final NowDefinition definition = NowDefinition.builder()
-                .name("WEE_Remand")
+                .templateName("WEE_Remand")
                 .includeAllResults(false)
                 .nowRequirements(List.of(primaryRequirement))
                 .build();
@@ -96,7 +101,7 @@ class NowsMetadataMatcherTest {
                 .nowRequirements(List.of(childRequirement))
                 .build();
         final NowDefinition definition = NowDefinition.builder()
-                .name("WEE_Remand")
+                .templateName("WEE_Remand")
                 .includeAllResults(false)
                 .nowRequirements(List.of(primaryRequirement))
                 .build();
@@ -122,7 +127,7 @@ class NowsMetadataMatcherTest {
                 .nowRequirements(List.of(childOfOtherRoot))
                 .build();
         final NowDefinition definition = NowDefinition.builder()
-                .name("WEE_Remand")
+                .templateName("WEE_Remand")
                 .includeAllResults(false)
                 .nowRequirements(List.of(primaryRequirement))
                 .build();
@@ -152,7 +157,7 @@ class NowsMetadataMatcherTest {
                 .nowRequirements(List.of(child))
                 .build();
         final NowDefinition definition = NowDefinition.builder()
-                .name("WEE_Remand")
+                .templateName("WEE_Remand")
                 .includeAllResults(false)
                 .nowRequirements(List.of(root))
                 .build();

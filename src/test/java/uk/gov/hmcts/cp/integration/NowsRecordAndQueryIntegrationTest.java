@@ -160,7 +160,8 @@ class NowsRecordAndQueryIntegrationTest {
     }
 
     private Set<MatchedEventType> matchedRemand() {
-        return Set.of(new MatchedEventType("WEE_Remand", Set.of(REMAND_RESULT_TYPE_ID)));
+        return Set.of(new MatchedEventType("WEE_Remand", "b4b55110-1d50-11e8-accf-0ed5f89f718b", "Remand Warrant",
+                Set.of(REMAND_RESULT_TYPE_ID)));
     }
 
     private MergedDefendant mergedDefendant() {
@@ -179,6 +180,7 @@ class NowsRecordAndQueryIntegrationTest {
                 .cases(List.of(new DefendantCaseLink(CASE_URN, DEFENDANT_ID.toString())))
                 .offences(List.of(offence()))
                 .results(List.of(remandResult(), unrelatedResult()))
+                .defendantResults(List.of())
                 .build();
     }
 
