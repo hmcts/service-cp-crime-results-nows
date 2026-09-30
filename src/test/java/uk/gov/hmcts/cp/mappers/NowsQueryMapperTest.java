@@ -1,5 +1,6 @@
 package uk.gov.hmcts.cp.mappers;
 
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -9,6 +10,9 @@ import tools.jackson.databind.ObjectMapper;
 import uk.gov.hmcts.cp.entities.EventEntity;
 import uk.gov.hmcts.cp.openapi.model.DefendantResult;
 
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -24,76 +28,18 @@ class NowsQueryMapperTest {
     private static final String UNMATCHED_RESULT_TYPE_ID = "9a1b2c3d-4e5f-6071-8293-a4b5c6d7e8f9";
     private static final String CASE_URN = "RC363968376";
 
-    private static final String CONTENT = """
-            {
-              "defendant": {
-                "title": "Mr", "firstName": "Lacy", "lastName": "Braun",
-                "dateOfBirth": "1998-09-02", "gender": "MALE",
-                "address": { "address1": "221B Baker Street", "postCode": "NW1 5BR" }
-              },
-              "hearing": {
-                "id": "6988027f-e786-49f4-a00f-7c35ab459464",
-                "courtHouseCode": "B01LY00",
-                "courtHouseName": "Lavender Hill Magistrates' Court",
-                "ljaName": "South West London Magistrates' Court",
-                "hearingDate": "2026-09-02",
-                "jurisdiction": "MAGISTRATES"
-              },
-              "offences": [
-                {
-                  "code": "TH68013A", "title": "Attempt theft of motor vehicle",
-                  "wording": "Attempt theft to vehicle", "convictionDate": "2026-09-02",
-                  "legislation": "Contrary to section 1(1) of the Criminal Attempts Act 1981.",
-                  "results": [
-                    {
-                      "judicialResultTypeId": "3f8e2a10-9c44-4b6a-8f01-2b7d9e5a6c11",
-                      "cjsCode": "RIBA48", "label": "Remanded in custody", "orderedDate": "2026-09-02",
-                      "prompts": [
-                        { "promptReference": "prisonOrganisationName", "label": "Prison organisation name", "value": "HMP/YOI Durham" }
-                      ]
-                    },
-                    {
-                      "judicialResultTypeId": "9a1b2c3d-4e5f-6071-8293-a4b5c6d7e8f9",
-                      "cjsCode": "OTHER", "label": "Unrelated result", "orderedDate": "2026-09-02",
-                      "prompts": []
-                    }
-                  ]
-                },
-                {
-                  "code": "ZZ99999", "title": "Unmatched offence", "results": [
-                    {
-                      "judicialResultTypeId": "9a1b2c3d-4e5f-6071-8293-a4b5c6d7e8f9",
-                      "cjsCode": "OTHER", "label": "Unrelated result", "prompts": []
-                    }
-                  ]
-                }
-              ],
-              "defendantResults": [
-                {
-                  "judicialResultTypeId": "3f8e2a10-9c44-4b6a-8f01-2b7d9e5a6c11",
-                  "label": "Risk or vulnerability factors", "orderedDate": "2026-09-02",
-                  "prompts": [
-                    { "promptReference": "riskOrVulnerabilityFactors", "label": "Risk or vulnerability factors", "value": "RiskFactor" }
-                  ]
-                },
-                {
-                  "judicialResultTypeId": "9a1b2c3d-4e5f-6071-8293-a4b5c6d7e8f9",
-                  "label": "Unrelated result", "prompts": []
-                }
-              ]
-            }
-            """;
-
     @Spy
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @InjectMocks
     private NowsQueryMapper mapper;
 
+    private final String content = readResourceContents("nows/defendant-snapshot-content-sample.json");
+
     @Test
     void toDefendantResult_should_mapDefendantAndHearing_fromSnapshotContent() {
         final DefendantResult result =
-                mapper.toDefendantResult(CASE_URN, DEFENDANT_ID, CONTENT, List.of(event(MATCHED_RESULT_TYPE_ID)));
+                mapper.toDefendantResult(CASE_URN, DEFENDANT_ID, content, List.of(event(MATCHED_RESULT_TYPE_ID)));
 
         assertThat(result.getCaseURN()).isEqualTo(CASE_URN);
         assertThat(result.getDefendant().getId()).isEqualTo(DEFENDANT_ID);
@@ -109,7 +55,7 @@ class NowsQueryMapperTest {
     @Test
     void toDefendantResult_should_keepOnlyResultsMatchedForTheEventType() {
         final DefendantResult result =
-                mapper.toDefendantResult(CASE_URN, DEFENDANT_ID, CONTENT, List.of(event(MATCHED_RESULT_TYPE_ID)));
+                mapper.toDefendantResult(CASE_URN, DEFENDANT_ID, content, List.of(event(MATCHED_RESULT_TYPE_ID)));
 
         assertThat(result.getEventTypes()).hasSize(1);
         assertThat(result.getEventTypes().get(0).getEventType()).isEqualTo("WEE_Remand");
@@ -142,7 +88,7 @@ class NowsQueryMapperTest {
 
     @Test
     void toDefendantResult_should_returnEmptyEventTypes_whenNoEventsRecorded() {
-        final DefendantResult result = mapper.toDefendantResult(CASE_URN, DEFENDANT_ID, CONTENT, List.of());
+        final DefendantResult result = mapper.toDefendantResult(CASE_URN, DEFENDANT_ID, content, List.of());
 
         assertThat(result.getEventTypes()).isEmpty();
     }
@@ -150,7 +96,7 @@ class NowsQueryMapperTest {
     @Test
     void toDefendantResult_should_keepBothOffences_whenResultTypeMatchesAcrossThem() {
         final DefendantResult result =
-                mapper.toDefendantResult(CASE_URN, DEFENDANT_ID, CONTENT, List.of(event(UNMATCHED_RESULT_TYPE_ID)));
+                mapper.toDefendantResult(CASE_URN, DEFENDANT_ID, content, List.of(event(UNMATCHED_RESULT_TYPE_ID)));
 
         assertThat(result.getEventTypes().get(0).getOffences()).hasSize(2);
     }
@@ -162,5 +108,11 @@ class NowsQueryMapperTest {
                 .matchedResultTypeIds("[\"" + matchedResultTypeId + "\"]")
                 .matchedAt(OffsetDateTime.parse("2026-09-02T18:05:00Z"))
                 .build();
+    }
+
+    @SneakyThrows
+    private String readResourceContents(final String resourceName) {
+        final URL resource = getClass().getClassLoader().getResource(resourceName);
+        return Files.readString(Path.of(resource.toURI()));
     }
 }

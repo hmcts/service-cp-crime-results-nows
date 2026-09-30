@@ -1,0 +1,57 @@
+{
+  "defendant": {
+    "title": "Mr", "firstName": "Lacy", "lastName": "Braun",
+    "dateOfBirth": "1998-09-02", "gender": "MALE",
+    "address": { "address1": "221B Baker Street", "postCode": "NW1 5BR" }
+  },
+  "hearing": {
+    "id": "6988027f-e786-49f4-a00f-7c35ab459464",
+    "courtHouseCode": "B01LY00",
+    "courtHouseName": "Lavender Hill Magistrates' Court",
+    "ljaName": "South West London Magistrates' Court",
+    "hearingDate": "2026-09-02",
+    "jurisdiction": "MAGISTRATES"
+  },
+  "offences": [
+    {
+      "code": "TH68013A", "title": "Attempt theft of motor vehicle",
+      "wording": "Attempt theft to vehicle", "convictionDate": "2026-09-02",
+      "legislation": "Contrary to section 1(1) of the Criminal Attempts Act 1981.",
+      "results": [
+        {
+          "judicialResultTypeId": "3f8e2a10-9c44-4b6a-8f01-2b7d9e5a6c11",
+          "cjsCode": "RIBA48", "label": "Remanded in custody", "orderedDate": "2026-09-02",
+          "prompts": [
+            { "promptReference": "prisonOrganisationName", "label": "Prison organisation name", "value": "HMP/YOI Durham" }
+          ]
+        },
+        {
+          "judicialResultTypeId": "9a1b2c3d-4e5f-6071-8293-a4b5c6d7e8f9",
+          "cjsCode": "OTHER", "label": "Unrelated result", "orderedDate": "2026-09-02",
+          "prompts": []
+        }
+      ]
+    },
+    {
+      "code": "ZZ99999", "title": "Unmatched offence", "results": [
+        {
+          "judicialResultTypeId": "9a1b2c3d-4e5f-6071-8293-a4b5c6d7e8f9",
+          "cjsCode": "OTHER", "label": "Unrelated result", "prompts": []
+        }
+      ]
+    }
+  ],
+  "defendantResults": [
+    {
+      "judicialResultTypeId": "3f8e2a10-9c44-4b6a-8f01-2b7d9e5a6c11",
+      "label": "Risk or vulnerability factors", "orderedDate": "2026-09-02",
+      "prompts": [
+        { "promptReference": "riskOrVulnerabilityFactors", "label": "Risk or vulnerability factors", "value": "RiskFactor" }
+      ]
+    },
+    {
+      "judicialResultTypeId": "9a1b2c3d-4e5f-6071-8293-a4b5c6d7e8f9",
+      "label": "Unrelated result", "prompts": []
+    }
+  ]
+}
