@@ -53,6 +53,8 @@ class NowsMetadataMatcherTest {
                 .primary(true)
                 .build();
         final NowDefinition definition = NowDefinition.builder()
+                .id("b4b55110-1d50-11e8-accf-0ed5f89f718b")
+                .name("Remand Warrant")
                 .templateName("WEE_Remand")
                 .includeAllResults(false)
                 .nowRequirements(List.of(primaryRequirement))
@@ -62,6 +64,9 @@ class NowsMetadataMatcherTest {
         final List<MatchedEventType> matches = matcher.match(defendant, List.of(definition));
 
         assertThat(matches).hasSize(1);
+        assertThat(matches.get(0).eventType()).isEqualTo("WEE_Remand");
+        assertThat(matches.get(0).nowId()).isEqualTo("b4b55110-1d50-11e8-accf-0ed5f89f718b");
+        assertThat(matches.get(0).orderName()).isEqualTo("Remand Warrant");
         assertThat(matches.get(0).matchedResultTypeIds()).containsExactly("rt-1");
     }
 

@@ -21,7 +21,8 @@ public class NowsMetadataMatcher {
             }
             final Set<String> matchedResultTypeIds = matchedResultTypeIds(defendant, definition);
             if (!matchedResultTypeIds.isEmpty()) {
-                matches.add(new MatchedEventType(definition.getTemplateName(), matchedResultTypeIds));
+                matches.add(new MatchedEventType(definition.getTemplateName(), definition.getId(), definition.getName(),
+                        matchedResultTypeIds));
             }
         }
         return matches;

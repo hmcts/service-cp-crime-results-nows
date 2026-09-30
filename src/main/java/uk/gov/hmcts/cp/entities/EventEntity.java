@@ -33,6 +33,9 @@ public class EventEntity {
     @Column(name = "event_type")
     private String eventType;
 
+    @Column(name = "order_name")
+    private String orderName;
+
     // judicialResultTypeId list that made this event type eligible (design doc §5c) — raw JSON
     // text, mapped to the jsonb column type. Lets the Query API filter defendant_snapshot.content
     // per event type at read time without re-running the requirement-tree match.

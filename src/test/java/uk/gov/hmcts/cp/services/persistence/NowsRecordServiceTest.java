@@ -46,6 +46,8 @@ class NowsRecordServiceTest {
     private static final String CASE_URN = "RC363968376";
     private static final String DEFENDANT_ID = "d2151771-41a1-42e1-af36-a99d9b39c0b2";
     private static final String EVENT_TYPE = "WEE_Remand";
+    private static final MatchedEventType MATCHED_EVENT_TYPE =
+            new MatchedEventType(EVENT_TYPE, "b4b55110-1d50-11e8-accf-0ed5f89f718b", "Remand Warrant", Set.of("rt-1"));
 
     @Mock
     private HearingRepository hearingRepository;
@@ -78,11 +80,11 @@ class NowsRecordServiceTest {
                 .thenReturn(DefendantCaseEntity.builder().build());
         when(recordMapper.toSnapshot(eq(DEFENDANT_ROW_ID), any()))
                 .thenReturn(DefendantSnapshotEntity.builder().build());
-        when(recordMapper.toEvent(eq(DEFENDANT_ROW_ID), eq(EVENT_TYPE), any()))
+        when(recordMapper.toEvent(eq(DEFENDANT_ROW_ID), eq(MATCHED_EVENT_TYPE), any()))
                 .thenReturn(EventEntity.builder().build());
 
         recordService.recordResult(HEARING_ID, HEARING_DAY, mergedDefendant(), HearingDetail.builder().build(),
-                Set.of(new MatchedEventType(EVENT_TYPE, Set.of("rt-1"))));
+                Set.of(MATCHED_EVENT_TYPE));
 
         verify(hearingRepository).save(any(HearingEntity.class));
         verify(defendantRepository).save(any(DefendantEntity.class));
@@ -102,7 +104,7 @@ class NowsRecordServiceTest {
                 .thenReturn(Optional.of(EventEntity.builder().build()));
 
         recordService.recordResult(HEARING_ID, HEARING_DAY, mergedDefendant(), HearingDetail.builder().build(),
-                Set.of(new MatchedEventType(EVENT_TYPE, Set.of("rt-1"))));
+                Set.of(MATCHED_EVENT_TYPE));
 
         verify(hearingRepository, never()).save(any());
         verify(defendantRepository, never()).save(any());

@@ -91,6 +91,7 @@ public class NowsQueryMapper {
                 objectMapper.readValue(event.getMatchedResultTypeIds(), RESULT_TYPE_IDS);
         return EventType.builder()
                 .eventType(event.getEventType())
+                .orderName(event.getOrderName())
                 .matchedAt(event.getMatchedAt() == null ? null : event.getMatchedAt().toInstant())
                 .offences(filterOffences(snapshot.offences(), matchedResultTypeIds))
                 .defendantResults(matchedResults(snapshot.defendantResults(), matchedResultTypeIds))

@@ -17,14 +17,24 @@ import java.util.Set;
 public class NowsSubscriptionMatcher {
 
     public boolean matches(final NowsSubscription subscription, final NowsVocabulary vocabulary,
-                            final MergedDefendant defendant, final Set<String> matchedResultTypeIds) {
+                            final MergedDefendant defendant, final String nowId,
+                            final Set<String> matchedResultTypeIds) {
         final boolean matches;
-        if (isTrue(subscription.getIsNowSubscription())) {
+        if (isTrue(subscription.getIsNowSubscription()) && appliesToNow(subscription, nowId)) {
             matches = matchesRules(subscription, vocabulary, defendant, matchedResultTypeIds);
         } else {
             matches = false;
         }
         return matches;
+    }
+
+    // Legacy SubscriptionsService.js matchSubscriptionRules: a present includedNOWS list (even an
+    // empty one) restricts the subscription to the NOWs it names; excludedNOWS bars those it names.
+    private boolean appliesToNow(final NowsSubscription subscription, final String nowId) {
+        final List<String> excluded = subscription.getExcludedNows();
+        final List<String> included = subscription.getIncludedNows();
+        return (excluded == null || !excluded.contains(nowId))
+                && (included == null || included.contains(nowId));
     }
 
     private boolean matchesRules(final NowsSubscription subscription, final NowsVocabulary vocabulary,

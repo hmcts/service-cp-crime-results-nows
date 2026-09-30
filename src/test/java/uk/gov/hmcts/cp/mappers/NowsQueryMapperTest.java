@@ -113,6 +113,7 @@ class NowsQueryMapperTest {
 
         assertThat(result.getEventTypes()).hasSize(1);
         assertThat(result.getEventTypes().get(0).getEventType()).isEqualTo("WEE_Remand");
+        assertThat(result.getEventTypes().get(0).getOrderName()).isEqualTo("Remand Warrant");
         assertThat(result.getEventTypes().get(0).getOffences()).hasSize(1);
         assertThat(result.getEventTypes().get(0).getOffences().get(0).getCode()).isEqualTo("TH68013A");
         assertThat(result.getEventTypes().get(0).getOffences().get(0).getResults()).hasSize(1);
@@ -157,6 +158,7 @@ class NowsQueryMapperTest {
     private EventEntity event(final String matchedResultTypeId) {
         return EventEntity.builder()
                 .eventType("WEE_Remand")
+                .orderName("Remand Warrant")
                 .matchedResultTypeIds("[\"" + matchedResultTypeId + "\"]")
                 .matchedAt(OffsetDateTime.parse("2026-09-02T18:05:00Z"))
                 .build();

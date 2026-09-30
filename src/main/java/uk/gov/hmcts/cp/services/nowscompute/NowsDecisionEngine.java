@@ -62,7 +62,7 @@ public class NowsDecisionEngine {
         for (final MatchedEventType candidate : candidates) {
             final boolean anySubscriptionMatches = nowSubscriptions.stream()
                     .anyMatch(subscription -> nowsSubscriptionMatcher.matches(
-                            subscription, vocabulary, defendant, candidate.matchedResultTypeIds()));
+                            subscription, vocabulary, defendant, candidate.nowId(), candidate.matchedResultTypeIds()));
             if (anySubscriptionMatches) {
                 eligible.add(candidate);
             }
