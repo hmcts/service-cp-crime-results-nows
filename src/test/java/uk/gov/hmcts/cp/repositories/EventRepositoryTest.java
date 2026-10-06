@@ -40,6 +40,7 @@ class EventRepositoryTest extends RepositoryIntegrationTestBase {
                 .id(EVENT_ROW_ID)
                 .defendantRowId(defendantRowId)
                 .eventType("WEE_CustodialSentence")
+                .orderName("Warrant for Custodial Sentence")
                 .matchedResultTypeIds("[\"3f8e2a10-9c44-4b6a-8f01-2b7d9e5a6c11\"]")
                 .matchedAt(OffsetDateTime.now(ZoneOffset.UTC))
                 .build());
@@ -56,6 +57,7 @@ class EventRepositoryTest extends RepositoryIntegrationTestBase {
                 .id(EVENT_ROW_ID)
                 .defendantRowId(defendantRowId)
                 .eventType("WEE_CustodialSentence")
+                .orderName("Warrant for Custodial Sentence")
                 .matchedResultTypeIds("[\"3f8e2a10-9c44-4b6a-8f01-2b7d9e5a6c11\"]")
                 .matchedAt(OffsetDateTime.now(ZoneOffset.UTC))
                 .build());
@@ -63,6 +65,7 @@ class EventRepositoryTest extends RepositoryIntegrationTestBase {
                 .id(EVENT_ROW_ID_2)
                 .defendantRowId(defendantRowId)
                 .eventType("NEE_FootballBanning")
+                .orderName("Notice of Football Banning Order")
                 .matchedResultTypeIds("[\"9a1b2c3d-4e5f-6071-8293-a4b5c6d7e8f9\"]")
                 .matchedAt(OffsetDateTime.now(ZoneOffset.UTC))
                 .build());
