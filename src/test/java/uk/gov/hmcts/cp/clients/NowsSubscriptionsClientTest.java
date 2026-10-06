@@ -80,6 +80,8 @@ class NowsSubscriptionsClientTest {
         final NowsSubscription subscription = subscriptions.get(0);
         assertThat(subscription.getIsNowSubscription()).isTrue();
         assertThat(subscription.getIsEDTSubscription()).isFalse();
+        assertThat(subscription.getIncludedNows()).containsExactly("b4b55110-1d50-11e8-accf-0ed5f89f718b");
+        assertThat(subscription.getExcludedNows()).containsExactly("10115268-8efc-49fe-b8e8-feee216a03da");
         assertThat(subscription.getSubscriptionVocabulary().getInCustody()).isTrue();
         assertThat(subscription.getSubscriptionVocabulary().getCustodyLocationIsPrison()).isTrue();
     }

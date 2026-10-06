@@ -1,6 +1,7 @@
 package uk.gov.hmcts.cp.domain.nowscompute;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,6 +28,11 @@ public class NowsSubscriptionsResponse {
         private Boolean isEDTSubscription;
         private Boolean applySubscriptionRules;
         private NowsSubscriptionVocabulary subscriptionVocabulary;
+        // NOW definition ids this subscription is limited to / barred from.
+        @JsonProperty("includedNOWS")
+        private List<String> includedNows;
+        @JsonProperty("excludedNOWS")
+        private List<String> excludedNows;
     }
 
     // Boolean, not boolean — a subscription omits keys it doesn't configure; null means "not

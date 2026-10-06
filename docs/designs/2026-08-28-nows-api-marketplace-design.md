@@ -254,8 +254,8 @@ schema decision, not an extension of this one.
 This is a reimplementation of legacy eligibility logic, not a call-through to it, so drift between
 the two is possible even with careful porting. The same golden-master approach is worth applying
 here: pick real hearings with a known legacy NOW outcome, feed the equivalent payload through this
-service's real matching code, and assert the resulting event-type set matches. Not yet built —
-recorded as a recommendation, not a commitment.
+service's real matching code, and assert the resulting event-type set matches. Built as
+`NowsDriftDetectionIntegrationTest` — see ADR-004.
 
 ---
 

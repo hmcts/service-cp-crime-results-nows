@@ -29,6 +29,7 @@ class DefendantSnapshotContentMapperTest {
 
     private static final UUID HEARING_ID = UUID.fromString("6988027f-e786-49f4-a00f-7c35ab459464");
     private static final String RESULT_TYPE_ID = "3f8e2a10-9c44-4b6a-8f01-2b7d9e5a6c11";
+    private static final String DEFENDANT_RESULT_TYPE_ID = "66105417-41c8-420d-820f-40b61b507442";
     private static final LocalDate SITTING_DAY = LocalDate.parse("2026-09-02");
 
     @InjectMocks
@@ -52,10 +53,16 @@ class DefendantSnapshotContentMapperTest {
 
         assertThat(content.offences()).hasSize(1);
         assertThat(content.offences().get(0).code()).isEqualTo("TH68013A");
+        assertThat(content.offences().get(0).legislation())
+                .isEqualTo("Contrary to section 1(1) of the Criminal Attempts Act 1981.");
         assertThat(content.offences().get(0).results()).hasSize(1);
         assertThat(content.offences().get(0).results().get(0).judicialResultTypeId()).isEqualTo(RESULT_TYPE_ID);
         assertThat(content.offences().get(0).results().get(0).prompts().get(0).promptReference())
                 .isEqualTo("prisonOrganisationName");
+        assertThat(content.defendantResults()).hasSize(1);
+        assertThat(content.defendantResults().get(0).judicialResultTypeId()).isEqualTo(DEFENDANT_RESULT_TYPE_ID);
+        assertThat(content.defendantResults().get(0).prompts().get(0).promptReference())
+                .isEqualTo("riskOrVulnerabilityFactors");
     }
 
     @Test
@@ -65,6 +72,17 @@ class DefendantSnapshotContentMapperTest {
         final DefendantSnapshotContent content = mapper.toContent(HEARING_ID, defendant, hearing());
 
         assertThat(content.defendant()).isNull();
+    }
+
+    @Test
+    void toContent_should_takeHearingDateFromSittingDateTime_whenSittingDayIsADateTime() {
+        final HearingDetail hearing = HearingDetail.builder()
+                .hearingDays(List.of(HearingDay.builder().sittingDay(SITTING_DAY + "T10:30:00.000Z").build()))
+                .build();
+
+        final DefendantSnapshotContent content = mapper.toContent(HEARING_ID, mergedDefendant(), hearing);
+
+        assertThat(content.hearing().hearingDate()).isEqualTo(SITTING_DAY);
     }
 
     @Test
@@ -98,8 +116,19 @@ class DefendantSnapshotContentMapperTest {
                 .offenceCode("TH68013A")
                 .offenceTitle("Attempt theft of motor vehicle")
                 .wording("Attempt theft to vehicle")
+                .offenceLegislation("Contrary to section 1(1) of the Criminal Attempts Act 1981.")
                 .convictionDate(SITTING_DAY)
                 .judicialResults(List.of(result))
+                .build();
+        final JudicialResult defendantResult = JudicialResult.builder()
+                .judicialResultTypeId(DEFENDANT_RESULT_TYPE_ID)
+                .label("Risk or vulnerability factors")
+                .orderedDate(SITTING_DAY)
+                .judicialResultPrompts(List.of(JudicialResultPrompt.builder()
+                        .promptReference("riskOrVulnerabilityFactors")
+                        .label("Risk or vulnerability factors")
+                        .value("RiskFactor")
+                        .build()))
                 .build();
         return MergedDefendant.builder()
                 .masterDefendantId("d2151771-41a1-42e1-af36-a99d9b39c0b2")
@@ -115,7 +144,8 @@ class DefendantSnapshotContentMapperTest {
                         .build())
                 .cases(List.of(new DefendantCaseLink("RC363968376", "d2151771-41a1-42e1-af36-a99d9b39c0b2")))
                 .offences(List.of(offence))
-                .results(List.of(result));
+                .results(List.of(result, defendantResult))
+                .defendantResults(List.of(defendantResult));
     }
 
     private HearingDetail hearing() {

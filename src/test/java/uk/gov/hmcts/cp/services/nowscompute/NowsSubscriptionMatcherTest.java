@@ -19,6 +19,8 @@ class NowsSubscriptionMatcherTest {
     private static final String DEFENDANT_ID = "d-1";
     private static final String CASE_URN = "RC363968376";
     private static final String RESULT_TYPE_ID = "rt-1";
+    private static final String NOW_ID = "b4b55110-1d50-11e8-accf-0ed5f89f718b";
+    private static final String OTHER_NOW_ID = "10115268-8efc-49fe-b8e8-feee216a03da";
 
     private final NowsSubscriptionMatcher matcher = new NowsSubscriptionMatcher();
 
@@ -28,7 +30,7 @@ class NowsSubscriptionMatcherTest {
                 .isNowSubscription(false)
                 .build();
 
-        final boolean result = matcher.matches(subscription, emptyVocabulary(), defendant(), Set.of());
+        final boolean result = matcher.matches(subscription, emptyVocabulary(), defendant(), NOW_ID, Set.of());
 
         assertThat(result).isFalse();
     }
@@ -40,7 +42,46 @@ class NowsSubscriptionMatcherTest {
                 .applySubscriptionRules(false)
                 .build();
 
-        final boolean result = matcher.matches(subscription, emptyVocabulary(), defendant(), Set.of());
+        final boolean result = matcher.matches(subscription, emptyVocabulary(), defendant(), NOW_ID, Set.of());
+
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    void matches_should_returnFalse_whenNowIsExcluded() {
+        final NowsSubscription subscription = NowsSubscription.builder()
+                .isNowSubscription(true)
+                .applySubscriptionRules(false)
+                .excludedNows(List.of(NOW_ID))
+                .build();
+
+        final boolean result = matcher.matches(subscription, emptyVocabulary(), defendant(), NOW_ID, Set.of());
+
+        assertThat(result).isFalse();
+    }
+
+    @Test
+    void matches_should_returnFalse_whenIncludedNowsOmitsTheNow() {
+        final NowsSubscription subscription = NowsSubscription.builder()
+                .isNowSubscription(true)
+                .applySubscriptionRules(false)
+                .includedNows(List.of(OTHER_NOW_ID))
+                .build();
+
+        final boolean result = matcher.matches(subscription, emptyVocabulary(), defendant(), NOW_ID, Set.of());
+
+        assertThat(result).isFalse();
+    }
+
+    @Test
+    void matches_should_returnTrue_whenIncludedNowsContainsTheNow() {
+        final NowsSubscription subscription = NowsSubscription.builder()
+                .isNowSubscription(true)
+                .applySubscriptionRules(false)
+                .includedNows(List.of(OTHER_NOW_ID, NOW_ID))
+                .build();
+
+        final boolean result = matcher.matches(subscription, emptyVocabulary(), defendant(), NOW_ID, Set.of());
 
         assertThat(result).isTrue();
     }
@@ -53,7 +94,7 @@ class NowsSubscriptionMatcherTest {
                 .subscriptionVocabulary(null)
                 .build();
 
-        final boolean result = matcher.matches(subscription, emptyVocabulary(), defendant(), Set.of());
+        final boolean result = matcher.matches(subscription, emptyVocabulary(), defendant(), NOW_ID, Set.of());
 
         assertThat(result).isTrue();
     }
@@ -70,7 +111,7 @@ class NowsSubscriptionMatcherTest {
         final NowsSubscription subscription = subscriptionWithRules(rules);
         final NowsVocabulary vocabulary = vocabularyBuilder().cpsProsecuted(true).build();
 
-        final boolean result = matcher.matches(subscription, vocabulary, defendant(), Set.of());
+        final boolean result = matcher.matches(subscription, vocabulary, defendant(), NOW_ID, Set.of());
 
         assertThat(result).isTrue();
     }
@@ -80,7 +121,7 @@ class NowsSubscriptionMatcherTest {
         final NowsSubscriptionVocabulary rules = fullyPermissiveRulesExcept().anyAppearance(true).build();
         final NowsVocabulary vocabulary = vocabularyBuilder().anyAppearance(false).build();
 
-        final boolean result = matcher.matches(subscriptionWithRules(rules), vocabulary, defendant(), Set.of());
+        final boolean result = matcher.matches(subscriptionWithRules(rules), vocabulary, defendant(), NOW_ID, Set.of());
 
         assertThat(result).isTrue();
     }
@@ -94,7 +135,7 @@ class NowsSubscriptionMatcherTest {
                 .build();
         final NowsVocabulary vocabulary = vocabularyBuilder().appearedInPerson(false).appearedByVideoLink(false).build();
 
-        final boolean result = matcher.matches(subscriptionWithRules(rules), vocabulary, defendant(), Set.of());
+        final boolean result = matcher.matches(subscriptionWithRules(rules), vocabulary, defendant(), NOW_ID, Set.of());
 
         assertThat(result).isFalse();
     }
@@ -107,7 +148,7 @@ class NowsSubscriptionMatcherTest {
                 .requiresNonProsecutorMajorCreditor(false)
                 .build();
 
-        final boolean result = matcher.matches(subscriptionWithRules(rules), emptyVocabulary(), defendant(), Set.of());
+        final boolean result = matcher.matches(subscriptionWithRules(rules), emptyVocabulary(), defendant(), NOW_ID, Set.of());
 
         assertThat(result).isTrue();
     }
@@ -119,7 +160,7 @@ class NowsSubscriptionMatcherTest {
                 .requiresProsecutorMajorCreditor(true)
                 .build();
 
-        final boolean result = matcher.matches(subscriptionWithRules(rules), emptyVocabulary(), defendant(), Set.of());
+        final boolean result = matcher.matches(subscriptionWithRules(rules), emptyVocabulary(), defendant(), NOW_ID, Set.of());
 
         assertThat(result).isFalse();
     }
@@ -133,7 +174,7 @@ class NowsSubscriptionMatcherTest {
                 .build();
         final NowsVocabulary vocabulary = vocabularyBuilder().englishCourtHearing(true).welshCourtHearing(false).build();
 
-        final boolean result = matcher.matches(subscriptionWithRules(rules), vocabulary, defendant(), Set.of());
+        final boolean result = matcher.matches(subscriptionWithRules(rules), vocabulary, defendant(), NOW_ID, Set.of());
 
         assertThat(result).isTrue();
     }
@@ -147,7 +188,7 @@ class NowsSubscriptionMatcherTest {
                 .build();
         final NowsVocabulary vocabulary = vocabularyBuilder().englishCourtHearing(false).welshCourtHearing(true).build();
 
-        final boolean result = matcher.matches(subscriptionWithRules(rules), vocabulary, defendant(), Set.of());
+        final boolean result = matcher.matches(subscriptionWithRules(rules), vocabulary, defendant(), NOW_ID, Set.of());
 
         assertThat(result).isFalse();
     }
@@ -161,7 +202,7 @@ class NowsSubscriptionMatcherTest {
                 .build();
         final NowsVocabulary vocabulary = vocabularyBuilder().youthDefendant(true).adultDefendant(false).build();
 
-        final boolean result = matcher.matches(subscriptionWithRules(rules), vocabulary, defendant(), Set.of());
+        final boolean result = matcher.matches(subscriptionWithRules(rules), vocabulary, defendant(), NOW_ID, Set.of());
 
         assertThat(result).isTrue();
     }
@@ -175,7 +216,7 @@ class NowsSubscriptionMatcherTest {
                 .build();
         final NowsVocabulary vocabulary = vocabularyBuilder().youthDefendant(false).adultDefendant(true).build();
 
-        final boolean result = matcher.matches(subscriptionWithRules(rules), vocabulary, defendant(), Set.of());
+        final boolean result = matcher.matches(subscriptionWithRules(rules), vocabulary, defendant(), NOW_ID, Set.of());
 
         assertThat(result).isFalse();
     }
@@ -190,7 +231,7 @@ class NowsSubscriptionMatcherTest {
                 .build();
         final NowsVocabulary vocabulary = vocabularyBuilder().custodyLocationIsPolice(true).build();
 
-        final boolean result = matcher.matches(subscriptionWithRules(rules), vocabulary, defendant(), Set.of());
+        final boolean result = matcher.matches(subscriptionWithRules(rules), vocabulary, defendant(), NOW_ID, Set.of());
 
         assertThat(result).isTrue();
     }
@@ -205,7 +246,7 @@ class NowsSubscriptionMatcherTest {
                 .build();
         final NowsVocabulary vocabulary = vocabularyBuilder().custodyLocationIsPrison(true).build();
 
-        final boolean result = matcher.matches(subscriptionWithRules(rules), vocabulary, defendant(), Set.of());
+        final boolean result = matcher.matches(subscriptionWithRules(rules), vocabulary, defendant(), NOW_ID, Set.of());
 
         assertThat(result).isFalse();
     }
@@ -220,7 +261,7 @@ class NowsSubscriptionMatcherTest {
                 .build();
         final NowsVocabulary vocabulary = vocabularyBuilder().atleastOneCustodialResult(true).build();
 
-        final boolean result = matcher.matches(subscriptionWithRules(rules), vocabulary, defendant(), Set.of());
+        final boolean result = matcher.matches(subscriptionWithRules(rules), vocabulary, defendant(), NOW_ID, Set.of());
 
         assertThat(result).isTrue();
     }
@@ -235,7 +276,7 @@ class NowsSubscriptionMatcherTest {
                 .build();
         final NowsVocabulary vocabulary = vocabularyBuilder().allNonCustodialResults(false).build();
 
-        final boolean result = matcher.matches(subscriptionWithRules(rules), vocabulary, defendant(), Set.of());
+        final boolean result = matcher.matches(subscriptionWithRules(rules), vocabulary, defendant(), NOW_ID, Set.of());
 
         assertThat(result).isFalse();
     }
@@ -251,7 +292,7 @@ class NowsSubscriptionMatcherTest {
                 .build();
         final MergedDefendant defendant = defendantWithResults(List.of(matchedResult));
 
-        final boolean result = matcher.matches(subscriptionWithRules(rules), emptyVocabulary(), defendant, Set.of(RESULT_TYPE_ID));
+        final boolean result = matcher.matches(subscriptionWithRules(rules), emptyVocabulary(), defendant, NOW_ID, Set.of(RESULT_TYPE_ID));
 
         assertThat(result).isTrue();
     }
@@ -264,7 +305,7 @@ class NowsSubscriptionMatcherTest {
         final JudicialResult matchedResult = JudicialResult.builder().judicialResultTypeId(RESULT_TYPE_ID).build();
         final MergedDefendant defendant = defendantWithResults(List.of(matchedResult));
 
-        final boolean result = matcher.matches(subscriptionWithRules(rules), emptyVocabulary(), defendant, Set.of(RESULT_TYPE_ID));
+        final boolean result = matcher.matches(subscriptionWithRules(rules), emptyVocabulary(), defendant, NOW_ID, Set.of(RESULT_TYPE_ID));
 
         assertThat(result).isFalse();
     }
@@ -280,7 +321,7 @@ class NowsSubscriptionMatcherTest {
                 .build();
         final MergedDefendant defendant = defendantWithResults(List.of(matchedResult));
 
-        final boolean result = matcher.matches(subscriptionWithRules(rules), emptyVocabulary(), defendant, Set.of(RESULT_TYPE_ID));
+        final boolean result = matcher.matches(subscriptionWithRules(rules), emptyVocabulary(), defendant, NOW_ID, Set.of(RESULT_TYPE_ID));
 
         assertThat(result).isFalse();
     }
@@ -291,7 +332,7 @@ class NowsSubscriptionMatcherTest {
                 .includedResults(List.of(RESULT_TYPE_ID))
                 .build();
 
-        final boolean result = matcher.matches(subscriptionWithRules(rules), emptyVocabulary(), defendant(), Set.of(RESULT_TYPE_ID));
+        final boolean result = matcher.matches(subscriptionWithRules(rules), emptyVocabulary(), defendant(), NOW_ID, Set.of(RESULT_TYPE_ID));
 
         assertThat(result).isTrue();
     }
@@ -302,7 +343,7 @@ class NowsSubscriptionMatcherTest {
                 .includedResults(List.of("rt-other"))
                 .build();
 
-        final boolean result = matcher.matches(subscriptionWithRules(rules), emptyVocabulary(), defendant(), Set.of(RESULT_TYPE_ID));
+        final boolean result = matcher.matches(subscriptionWithRules(rules), emptyVocabulary(), defendant(), NOW_ID, Set.of(RESULT_TYPE_ID));
 
         assertThat(result).isFalse();
     }
@@ -313,7 +354,7 @@ class NowsSubscriptionMatcherTest {
                 .excludedResults(List.of(RESULT_TYPE_ID))
                 .build();
 
-        final boolean result = matcher.matches(subscriptionWithRules(rules), emptyVocabulary(), defendant(), Set.of(RESULT_TYPE_ID));
+        final boolean result = matcher.matches(subscriptionWithRules(rules), emptyVocabulary(), defendant(), NOW_ID, Set.of(RESULT_TYPE_ID));
 
         assertThat(result).isFalse();
     }

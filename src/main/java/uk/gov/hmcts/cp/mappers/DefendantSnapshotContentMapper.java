@@ -3,6 +3,7 @@ package uk.gov.hmcts.cp.mappers;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.cp.domain.HearingDetailsResponse.Address;
 import uk.gov.hmcts.cp.domain.HearingDetailsResponse.CourtCentre;
+import uk.gov.hmcts.cp.domain.HearingDetailsResponse.HearingDay;
 import uk.gov.hmcts.cp.domain.HearingDetailsResponse.HearingDetail;
 import uk.gov.hmcts.cp.domain.HearingDetailsResponse.JudicialResult;
 import uk.gov.hmcts.cp.domain.HearingDetailsResponse.JudicialResultPrompt;
@@ -33,6 +34,7 @@ public class DefendantSnapshotContentMapper {
                 .defendant(toSnapshotDefendant(defendant.personDefendant()))
                 .hearing(toSnapshotHearing(hearingId, hearing))
                 .offences(defendant.offences().stream().map(this::toSnapshotOffence).toList())
+                .defendantResults(defendant.defendantResults().stream().map(this::toSnapshotResult).toList())
                 .build();
     }
 
@@ -82,7 +84,9 @@ public class DefendantSnapshotContentMapper {
     private Optional<LocalDate> parseDate(final String sittingDay) {
         Optional<LocalDate> parsed;
         try {
-            parsed = sittingDay == null ? Optional.empty() : Optional.of(LocalDate.parse(sittingDay));
+            parsed = sittingDay == null
+                    ? Optional.empty()
+                    : Optional.of(LocalDate.parse(sittingDay, HearingDay.SITTING_DAY_FORMAT));
         } catch (DateTimeParseException e) {
             parsed = Optional.empty();
         }
@@ -94,6 +98,7 @@ public class DefendantSnapshotContentMapper {
                 .code(offence.getOffenceCode())
                 .title(offence.getOffenceTitle())
                 .wording(offence.getWording())
+                .legislation(offence.getOffenceLegislation())
                 .convictionDate(offence.getConvictionDate())
                 .results(nullSafe(offence.getJudicialResults()).stream().map(this::toSnapshotResult).toList())
                 .build();

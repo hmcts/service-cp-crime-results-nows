@@ -78,7 +78,7 @@ class NowsMetadataClientTest {
 
         assertThat(definitions).hasSize(1);
         final NowDefinition definition = definitions.get(0);
-        assertThat(definition.getName()).isEqualTo("WEE_CustodialSentence");
+        assertThat(definition.getTemplateName()).isEqualTo("WEE_CustodialSentence");
         assertThat(definition.getNowTextList()).hasSize(1);
         assertThat(definition.getNowTextList().get(0).getNowReference()).isEqualTo("orderText");
         assertThat(definition.getNowRequirements()).hasSize(1);

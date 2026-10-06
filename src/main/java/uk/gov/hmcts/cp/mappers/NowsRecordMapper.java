@@ -8,6 +8,7 @@ import uk.gov.hmcts.cp.entities.DefendantSnapshotEntity;
 import uk.gov.hmcts.cp.entities.EventEntity;
 import uk.gov.hmcts.cp.entities.HearingEntity;
 import uk.gov.hmcts.cp.services.ClockService;
+import uk.gov.hmcts.cp.services.nowscompute.MatchedEventType;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -57,11 +58,13 @@ public class NowsRecordMapper {
         return existing.toBuilder().content(content).build();
     }
 
-    public EventEntity toEvent(final UUID defendantRowId, final String eventType, final String matchedResultTypeIds) {
+    public EventEntity toEvent(final UUID defendantRowId, final MatchedEventType matchedEventType,
+                               final String matchedResultTypeIds) {
         return EventEntity.builder()
                 .id(UUID.randomUUID())
                 .defendantRowId(defendantRowId)
-                .eventType(eventType)
+                .eventType(matchedEventType.eventType())
+                .orderName(matchedEventType.orderName())
                 .matchedResultTypeIds(matchedResultTypeIds)
                 .matchedAt(clockService.nowOffsetUTC())
                 .build();

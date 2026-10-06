@@ -16,7 +16,8 @@ public record MergedDefendant(
         PersonDefendant personDefendant,
         List<DefendantCaseLink> cases,
         List<Offence> offences,
-        List<JudicialResult> results) {
+        List<JudicialResult> results,
+        List<JudicialResult> defendantResults) {
 
     public List<String> defendantIds() {
         return cases.stream().map(DefendantCaseLink::defendantId).toList();
